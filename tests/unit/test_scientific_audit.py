@@ -1,4 +1,5 @@
 """Unit tests for scientific_audit module (P-1: bounded review-signal schema)."""
+
 from __future__ import annotations
 
 import importlib
@@ -52,6 +53,7 @@ def _reload_audit_in_mock_mode(monkeypatch):
     monkeypatch.setitem(sys.modules, "spar_domain_physics.runtime", None)
     monkeypatch.setitem(sys.modules, "spar_domain_physics", None)
     import qsot_v2.physics.scientific_audit as audit
+
     importlib.reload(audit)
     return audit
 
@@ -105,9 +107,17 @@ def test_audit_entry_schema_completeness(monkeypatch):
     entry = res.to_entry("ACCEPT")
 
     required = {
-        "verdict", "expected_verdict", "raw_score", "normalized_score", "raw_score_scale",
-        "claim_drift_raw", "claim_drift_normalized", "claim_drift_scale",
-        "coverage_rate", "evidence_class", "backend_mode",
+        "verdict",
+        "expected_verdict",
+        "raw_score",
+        "normalized_score",
+        "raw_score_scale",
+        "claim_drift_raw",
+        "claim_drift_normalized",
+        "claim_drift_scale",
+        "coverage_rate",
+        "evidence_class",
+        "backend_mode",
     }
     assert required.issubset(entry.keys())
     # Legacy fields must not appear in Stage A outputs.

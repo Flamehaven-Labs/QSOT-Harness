@@ -1,4 +1,5 @@
 """Phase 2: Curvature Noise."""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -28,27 +29,31 @@ def run_phase2(ctx: PhaseContext) -> None:
     s_schwarz = c_schwarz.evolve_through_background(
         bg_schwarz, steps=ctx.config.steps, sensitivity=ctx.config.sensitivity
     )
-    
+
     c_desitter = QuantumCircuit(QuantumState.ground())
     s_desitter = c_desitter.evolve_through_background(
         bg_desitter, steps=ctx.config.steps, sensitivity=ctx.config.sensitivity
     )
-    
+
     c_ads = QuantumCircuit(QuantumState.ground())
     s_ads = c_ads.evolve_through_background(
         bg_ads, steps=ctx.config.steps, sensitivity=ctx.config.sensitivity
     )
-    
+
     c_eguchi = QuantumCircuit(QuantumState.ground())
     s_eguchi = c_eguchi.evolve_through_background(
         bg_eguchi, steps=ctx.config.steps, sensitivity=ctx.config.sensitivity
     )
 
     # Decay checks
-    ctx.result.checks["schwarzschild_purity_decays"] = "PASS" if s_schwarz[-1].purity < 1.0 else "FAIL"
+    ctx.result.checks["schwarzschild_purity_decays"] = (
+        "PASS" if s_schwarz[-1].purity < 1.0 else "FAIL"
+    )
     ctx.result.checks["desitter_purity_decays"] = "PASS" if s_desitter[-1].purity < 1.0 else "FAIL"
     ctx.result.checks["ads5_purity_decays"] = "PASS" if s_ads[-1].purity < 1.0 else "FAIL"
-    ctx.result.checks["eguchi_hanson_purity_decays"] = "PASS" if s_eguchi[-1].purity < 1.0 else "FAIL"
+    ctx.result.checks["eguchi_hanson_purity_decays"] = (
+        "PASS" if s_eguchi[-1].purity < 1.0 else "FAIL"
+    )
 
     ctx.result.observations["schwarz_purity"] = s_schwarz[-1].purity
     ctx.result.observations["desitter_purity"] = s_desitter[-1].purity
@@ -56,10 +61,18 @@ def run_phase2(ctx: PhaseContext) -> None:
     ctx.result.observations["eguchi_purity"] = s_eguchi[-1].purity
 
     # Entropy positive checks
-    ctx.result.checks["schwarzschild_entropy_positive"] = "PASS" if s_schwarz[-1].von_neumann_entropy > 0.0 else "FAIL"
-    ctx.result.checks["desitter_entropy_positive"] = "PASS" if s_desitter[-1].von_neumann_entropy > 0.0 else "FAIL"
-    ctx.result.checks["ads5_entropy_positive"] = "PASS" if s_ads[-1].von_neumann_entropy > 0.0 else "FAIL"
-    ctx.result.checks["eguchi_hanson_entropy_positive"] = "PASS" if s_eguchi[-1].von_neumann_entropy > 0.0 else "FAIL"
+    ctx.result.checks["schwarzschild_entropy_positive"] = (
+        "PASS" if s_schwarz[-1].von_neumann_entropy > 0.0 else "FAIL"
+    )
+    ctx.result.checks["desitter_entropy_positive"] = (
+        "PASS" if s_desitter[-1].von_neumann_entropy > 0.0 else "FAIL"
+    )
+    ctx.result.checks["ads5_entropy_positive"] = (
+        "PASS" if s_ads[-1].von_neumann_entropy > 0.0 else "FAIL"
+    )
+    ctx.result.checks["eguchi_hanson_entropy_positive"] = (
+        "PASS" if s_eguchi[-1].von_neumann_entropy > 0.0 else "FAIL"
+    )
 
     ctx.result.observations["schwarz_entropy"] = s_schwarz[-1].von_neumann_entropy
     ctx.result.observations["desitter_entropy"] = s_desitter[-1].von_neumann_entropy
@@ -74,12 +87,23 @@ def run_phase2(ctx: PhaseContext) -> None:
     schwarz_verify = run_background_verify("schwarzschild")[0]
     ads_verify = run_background_verify("ads5")[0]
 
-    ctx.result.checks["desitter_gate_fails"] = "PASS" if desitter_verify["gate"] == "FAIL" else "FAIL"
+    ctx.result.checks["desitter_gate_fails"] = (
+        "PASS" if desitter_verify["gate"] == "FAIL" else "FAIL"
+    )
     ctx.result.checks["godel_gate_fails_and_ctc_detected"] = (
-        "PASS" if (godel_verify["gate"] == "FAIL" and godel_verify["physics"]["ctc_status"].upper() == "DETECTED") else "FAIL"
+        "PASS"
+        if (
+            godel_verify["gate"] == "FAIL"
+            and godel_verify["physics"]["ctc_status"].upper() == "DETECTED"
+        )
+        else "FAIL"
     )
     ctx.result.checks["eguchi_hanson_gate_fails_gs"] = (
-        "PASS" if (eguchi_verify["gate"] == "FAIL" and eguchi_verify["physics"]["gs_anomaly_flag"] is True) else "FAIL"
+        "PASS"
+        if (
+            eguchi_verify["gate"] == "FAIL" and eguchi_verify["physics"]["gs_anomaly_flag"] is True
+        )
+        else "FAIL"
     )
 
     ctx.result.observations["desitter_verify"] = desitter_verify
@@ -89,10 +113,18 @@ def run_phase2(ctx: PhaseContext) -> None:
     ctx.result.observations["ads5_verify"] = ads_verify
 
     # Curvature positive checks
-    ctx.result.checks["schwarzschild_curvature_positive"] = "PASS" if schwarz_verify["physics"]["riemann_norm"] > 0.0 else "FAIL"
-    ctx.result.checks["desitter_curvature_positive"] = "PASS" if desitter_verify["physics"]["riemann_norm"] > 0.0 else "FAIL"
-    ctx.result.checks["ads5_curvature_positive"] = "PASS" if ads_verify["physics"]["riemann_norm"] > 0.0 else "FAIL"
-    ctx.result.checks["eguchi_hanson_curvature_positive"] = "PASS" if eguchi_verify["physics"]["riemann_norm"] > 0.0 else "FAIL"
+    ctx.result.checks["schwarzschild_curvature_positive"] = (
+        "PASS" if schwarz_verify["physics"]["riemann_norm"] > 0.0 else "FAIL"
+    )
+    ctx.result.checks["desitter_curvature_positive"] = (
+        "PASS" if desitter_verify["physics"]["riemann_norm"] > 0.0 else "FAIL"
+    )
+    ctx.result.checks["ads5_curvature_positive"] = (
+        "PASS" if ads_verify["physics"]["riemann_norm"] > 0.0 else "FAIL"
+    )
+    ctx.result.checks["eguchi_hanson_curvature_positive"] = (
+        "PASS" if eguchi_verify["physics"]["riemann_norm"] > 0.0 else "FAIL"
+    )
 
 
 def skip_phase2(ctx: PhaseContext) -> None:

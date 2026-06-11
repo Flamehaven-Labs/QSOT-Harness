@@ -1,5 +1,5 @@
-"""BetaResidualVerifier dynamic implementation delegating to classification policies.
-"""
+"""BetaResidualVerifier dynamic implementation delegating to classification policies."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field

@@ -1,4 +1,5 @@
 """ExperimentResult and CheckStatus types."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -12,6 +13,7 @@ Verdict = Literal["PASS", "FAIL", "DEGRADED_PASS"]
 @dataclass
 class ExperimentResult:
     """Full result of one experiment run."""
+
     experiment_id: str
     schema_id: str = "compliance.qsot_v2.experiment_result.v2"
     generated_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
@@ -80,6 +82,7 @@ class ExperimentResult:
         """Serialize to JSON-compatible dict."""
         from qsot_v2.core.evidence import build_evidence_registry
         from qsot_v2.theory.claim_boundary import CLAIM_BOUNDARY
+
         return {
             "schema_id": self.schema_id,
             "experiment_id": self.experiment_id,
@@ -105,6 +108,7 @@ def _sanitize(obj: Any) -> Any:
     """Recursively convert numpy types to Python natives for JSON serialization."""
     try:
         import numpy as np
+
         if isinstance(obj, np.integer):
             return int(obj)
         if isinstance(obj, np.floating):

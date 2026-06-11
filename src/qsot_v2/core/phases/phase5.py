@@ -1,4 +1,5 @@
 """Phase 5: TTM & Accessibility."""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -71,15 +72,24 @@ def run_phase5(ctx: PhaseContext) -> None:
     # accessibility score checks
     score_pass = compute_accessibility_score(gate_report={"pass": True, "gate": "PASS"})
     score_fail = compute_accessibility_score(gate_report={"pass": False, "gate": "FAIL"})
-    ctx.result.checks["accessibility_passes_fully"] = "PASS" if score_pass["final_access_score"] == 1.0 else "FAIL"
-    ctx.result.checks["accessibility_fails_fully"] = "PASS" if score_fail["final_access_score"] == 0.0 else "FAIL"
+    ctx.result.checks["accessibility_passes_fully"] = (
+        "PASS" if score_pass["final_access_score"] == 1.0 else "FAIL"
+    )
+    ctx.result.checks["accessibility_fails_fully"] = (
+        "PASS" if score_fail["final_access_score"] == 0.0 else "FAIL"
+    )
 
     score_nm = compute_accessibility_score(
         gate_report={"pass": True, "gate": "PASS"},
         markov_report={"nm_measure": 0.5, "depth": 1},
     )
     ctx.result.checks["accessibility_penalizes_non_markovianity"] = (
-        "PASS" if (score_nm["final_access_score"] < score_nm["base_score"] and score_nm["markov_penalty"] > 0.0) else "FAIL"
+        "PASS"
+        if (
+            score_nm["final_access_score"] < score_nm["base_score"]
+            and score_nm["markov_penalty"] > 0.0
+        )
+        else "FAIL"
     )
 
     score_kd = compute_accessibility_score(
@@ -87,7 +97,12 @@ def run_phase5(ctx: PhaseContext) -> None:
         kd_metrics={"negativity_proxy": 0.01},
     )
     ctx.result.checks["accessibility_penalizes_kd_negativity"] = (
-        "PASS" if (score_kd["final_access_score"] < score_kd["base_score"] and score_kd["kd_penalty"] > 0.0) else "FAIL"
+        "PASS"
+        if (
+            score_kd["final_access_score"] < score_kd["base_score"]
+            and score_kd["kd_penalty"] > 0.0
+        )
+        else "FAIL"
     )
 
     ctx.result.observations["accessibility_scores"] = {

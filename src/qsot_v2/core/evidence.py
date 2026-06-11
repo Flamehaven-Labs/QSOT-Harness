@@ -10,19 +10,20 @@ tell, per value, what kind of evidence it is. Stage A uses a hybrid scheme:
 
 This module is the single source of truth for the vocabulary and the mapping.
 """
+
 from __future__ import annotations
 
 from typing import Dict
 
 # Bounded vocabulary (the only labels allowed anywhere in a result).
 EVIDENCE_CLASSES = (
-    "mathematical_invariant",       # exact algebraic property of the representation
+    "mathematical_invariant",  # exact algebraic property of the representation
     "phenomenological_model_output",  # output of the phenomenological channel map
     "policy_derived_classification",  # gate / admissibility / decree from rule-based policy
-    "synthetic_harness_output",     # value from an injected / generated test scenario
-    "external_review_signal",       # bounded, environment-dependent external audit signal
-    "optional_engine_check",        # result of an optional governance-engine validation
-    "runtime_dependency_status",    # which runtime dependencies are present / declared
+    "synthetic_harness_output",  # value from an injected / generated test scenario
+    "external_review_signal",  # bounded, environment-dependent external audit signal
+    "optional_engine_check",  # result of an optional governance-engine validation
+    "runtime_dependency_status",  # which runtime dependencies are present / declared
 )
 
 # Observation block key -> evidence class. Only *major* signals are listed;

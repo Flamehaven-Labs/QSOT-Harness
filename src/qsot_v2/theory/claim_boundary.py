@@ -1,5 +1,5 @@
-"""Explicit claim boundary constants for QSOT Compiler V2.1.
-"""
+"""Explicit claim boundary constants for QSOT Compiler V2.1."""
+
 from __future__ import annotations
 
 EXTERNAL_PHYSICAL_VALIDITY_CLAIMED: bool = False

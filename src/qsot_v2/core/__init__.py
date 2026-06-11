@@ -1,4 +1,5 @@
 """Core experiment infrastructure: runner, config, results."""
+
 from __future__ import annotations
 
 from qsot_v2.core.config import ExperimentConfig

@@ -3,6 +3,7 @@
 Finds optimal measurement basis angles (theta, phi) to maximize
 KD negativity -- a proxy indicator of non-classicality (contextuality).
 """
+
 from __future__ import annotations
 
 import json
@@ -18,6 +19,7 @@ DEFAULT_PATIENCE = 20
 
 try:
     import torch
+
     TORCH_AVAILABLE = True
 except ImportError:
     TORCH_AVAILABLE = False
@@ -36,18 +38,10 @@ if TORCH_AVAILABLE:
             super().__init__()
             self.rho = torch.tensor(rho_np, dtype=torch.complex128)
             torch.manual_seed(42)
-            self.theta_a = torch.nn.Parameter(
-                (torch.rand(1) * np.pi).to(dtype=torch.float64)
-            )
-            self.phi_a = torch.nn.Parameter(
-                (torch.rand(1) * 2 * np.pi).to(dtype=torch.float64)
-            )
-            self.theta_b = torch.nn.Parameter(
-                (torch.rand(1) * np.pi).to(dtype=torch.float64)
-            )
-            self.phi_b = torch.nn.Parameter(
-                (torch.rand(1) * 2 * np.pi).to(dtype=torch.float64)
-            )
+            self.theta_a = torch.nn.Parameter((torch.rand(1) * np.pi).to(dtype=torch.float64))
+            self.phi_a = torch.nn.Parameter((torch.rand(1) * 2 * np.pi).to(dtype=torch.float64))
+            self.theta_b = torch.nn.Parameter((torch.rand(1) * np.pi).to(dtype=torch.float64))
+            self.phi_b = torch.nn.Parameter((torch.rand(1) * 2 * np.pi).to(dtype=torch.float64))
 
         def get_projector(self, theta, phi):
             c = torch.cos(theta / 2)
@@ -89,9 +83,7 @@ def run_kd_optimization(
             rho = data[keys[-1]]
     except (FileNotFoundError, KeyError, OSError, ValueError) as e:
         logger.error("Failed to load state: %s", e)
-        Path(out_path).write_text(
-            json.dumps({"kd_value": 0.0, "error": str(e)}, indent=2)
-        )
+        Path(out_path).write_text(json.dumps({"kd_value": 0.0, "error": str(e)}, indent=2))
         return None
 
     model = QuantumOptimizer(rho)

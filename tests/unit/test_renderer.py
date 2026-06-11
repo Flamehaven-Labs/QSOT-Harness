@@ -1,4 +1,5 @@
 """Unit tests for ReportRenderer class."""
+
 from __future__ import annotations
 
 import tempfile
@@ -25,6 +26,7 @@ def test_renderer():
 
         # Check content
         import json
+
         data = json.loads(paths["json"].read_text())
         assert data["experiment_id"] == "test-exp"
         assert data["verdict"] == "PASS"

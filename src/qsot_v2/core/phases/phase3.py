@@ -1,4 +1,5 @@
 """Phase 3: Relativistic Boosts."""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -33,15 +34,27 @@ def run_phase3(ctx: PhaseContext) -> None:
     p_boost = c_boost.state.purity
 
     ctx.result.checks["boost_accelerates_purity_decay"] = "PASS" if p_boost < p_rest else "FAIL"
-    ctx.result.checks["boost_amplifies_noise_parameter"] = "PASS" if ads_boost["p_effective"] > ads_boost["p_curvature"] else "FAIL"
-    ctx.result.checks["gamma_boost_greater_than_1"] = "PASS" if ads_boost["gamma_boost"] > 1.0 else "FAIL"
-    ctx.result.observations["ads_boost_info"] = {k: v for k, v in ads_boost.items() if k != "channel"}
+    ctx.result.checks["boost_amplifies_noise_parameter"] = (
+        "PASS" if ads_boost["p_effective"] > ads_boost["p_curvature"] else "FAIL"
+    )
+    ctx.result.checks["gamma_boost_greater_than_1"] = (
+        "PASS" if ads_boost["gamma_boost"] > 1.0 else "FAIL"
+    )
+    ctx.result.observations["ads_boost_info"] = {
+        k: v for k, v in ads_boost.items() if k != "channel"
+    }
 
     # Schwarzschild boost
     schwarz_rest = mapper.gravitational_decoherence(bg_schwarz, observer_velocity=0.0)
-    ctx.result.checks["gamma_grav_greater_than_1"] = "PASS" if schwarz_rest["gamma_gravitational"] > 1.0 else "FAIL"
-    ctx.result.checks["gamma_total_combines_effects"] = "PASS" if ads_boost["gamma_total"] > 1.0 else "FAIL"
-    ctx.result.observations["schwarz_rest_info"] = {k: v for k, v in schwarz_rest.items() if k != "channel"}
+    ctx.result.checks["gamma_grav_greater_than_1"] = (
+        "PASS" if schwarz_rest["gamma_gravitational"] > 1.0 else "FAIL"
+    )
+    ctx.result.checks["gamma_total_combines_effects"] = (
+        "PASS" if ads_boost["gamma_total"] > 1.0 else "FAIL"
+    )
+    ctx.result.observations["schwarz_rest_info"] = {
+        k: v for k, v in schwarz_rest.items() if k != "channel"
+    }
 
 
 def skip_phase3(ctx: PhaseContext) -> None:

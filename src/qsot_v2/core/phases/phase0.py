@@ -1,4 +1,5 @@
 """Phase 0: Temporal-State Axioms verifications."""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING

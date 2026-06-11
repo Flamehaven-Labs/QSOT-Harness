@@ -1,4 +1,5 @@
 """Unit tests for physics simulator modules."""
+
 from __future__ import annotations
 
 import numpy as np
@@ -43,6 +44,7 @@ def test_quantum_state():
     with pytest.raises(ValueError):
         QuantumState(np.zeros((3, 3)))
 
+
 def test_kraus_channel(flat_background):
     mapper = MetricToChannelMap(sensitivity=0.1)
     ch = mapper.to_channel(flat_background)
@@ -55,6 +57,7 @@ def test_kraus_channel(flat_background):
     rho = QuantumState.ground().rho
     assert np.allclose(ch_id.apply(rho), rho)
 
+
 def test_metric_to_channel_map():
     # Depolarizing sensitivity check
     with pytest.raises(ValueError):
@@ -66,7 +69,7 @@ def test_metric_to_channel_map():
     mapper_deph = MetricToChannelMap(sensitivity=0.1, channel_type="dephasing")
 
     # Schwarzschild background
-    sch = BackgroundField(name="schwarz", G=np.diag([-1.0, 1.0]), ricci_matrix=np.eye(2)*0.1)
+    sch = BackgroundField(name="schwarz", G=np.diag([-1.0, 1.0]), ricci_matrix=np.eye(2) * 0.1)
     ch_depol = mapper_depol.to_channel(sch)
     ch_deph = mapper_deph.to_channel(sch)
     assert ch_depol.channel_type == "depolarizing"
@@ -74,10 +77,11 @@ def test_metric_to_channel_map():
     assert ch_depol.p > 0.0
     assert ch_deph.p > 0.0
 
+
 def test_gravitational_decoherence():
     mapper = MetricToChannelMap(sensitivity=0.1)
-    bg = BackgroundField(name="test", G=np.diag([-0.5, 1.0]), ricci_matrix=np.eye(2)*0.1)
-    
+    bg = BackgroundField(name="test", G=np.diag([-0.5, 1.0]), ricci_matrix=np.eye(2) * 0.1)
+
     # Rest frame
     res_rest = mapper.gravitational_decoherence(bg, observer_velocity=0.0)
     assert res_rest["gamma_gravitational"] == pytest.approx(np.sqrt(2.0))
@@ -94,6 +98,7 @@ def test_gravitational_decoherence():
         mapper.gravitational_decoherence(bg, observer_velocity=-0.1)
     with pytest.raises(ValueError):
         mapper.gravitational_decoherence(bg, observer_velocity=1.0)
+
 
 def test_quantum_circuit(flat_background):
     circuit = QuantumCircuit()
@@ -116,6 +121,7 @@ def test_quantum_circuit(flat_background):
     assert np.allclose(circuit.state.rho, QuantumState.excited().rho)
     assert len(circuit.purity_history()) == 2
     assert len(circuit.coherence_history()) == 2
+
 
 def test_run_background_verify():
     flat = run_background_verify("flat")[0]
@@ -142,6 +148,7 @@ def test_run_background_verify():
     with pytest.raises(ValueError):
         run_background_verify("invalid_preset")
 
+
 def test_beta_residual_verifier(flat_background):
     verifier = BetaResidualVerifier()
     # Explicitly make sure flat_background is classified correctly
@@ -154,7 +161,7 @@ def test_beta_residual_verifier(flat_background):
     sch_bg = BackgroundField(
         name="schwarzschild",
         G=np.diag([-1.0, 1.0]),
-        ricci_matrix=np.eye(2)*0.1,
+        ricci_matrix=np.eye(2) * 0.1,
         is_symbolic_ricci_flat=False,
     )
     res_sch = verifier.verify(sch_bg)
@@ -164,16 +171,17 @@ def test_beta_residual_verifier(flat_background):
     eh_bg = BackgroundField(
         name="eguchi_hanson",
         G=np.diag([-1.0, 1.0]),
-        ricci_matrix=np.eye(2)*0.1,
+        ricci_matrix=np.eye(2) * 0.1,
         gs_anomaly_flag=True,
         gs_anomaly_reason="topological_anomaly_proxy",
     )
     res_eh = verifier.verify(eh_bg)
     assert res_eh.gs_anomaly_flag is True
 
+
 def test_classification_coverage():
     from qsot_v2.physics.classification import classify_background, compute_admissibility
-    
+
     # 1. Custom mock background with ricci_matrix but without ricci_norm
     class MockBgWithMatrix:
         ricci_matrix = np.eye(2) * 0.5
@@ -183,15 +191,15 @@ def test_classification_coverage():
         gs_anomaly_flag = False
         D = 10
         G = np.diag([-1.0, 1.0])
-    
+
     cls1 = classify_background(MockBgWithMatrix())
     assert cls1["ricci_norm"] > 0.0
-    
+
     # 2. Custom mock background without ricci_matrix and without ricci_norm
     class MockBgEmpty:
         D = 4
         G = np.diag([-1.0, 1.0])
-        
+
     cls2 = classify_background(MockBgEmpty())
     assert cls2["ricci_norm"] == 0.0
 
@@ -203,8 +211,7 @@ def test_classification_coverage():
         is_conformal_background = False
         has_ctc = False
         gs_anomaly_flag = False
-        
+
     adm = compute_admissibility(MockNonVacuumBg())
     assert adm["admissibility"] == 0.2
     assert adm["reason"] == "nonzero_beta_residual"
-

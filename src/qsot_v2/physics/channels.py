@@ -9,6 +9,7 @@ Ricci curvature is reserved for beta/admissibility classification.
 Alpha (sensitivity) remains a free phenomenological calibration parameter,
 not a first-principles constant. See qgb.py docstring for sensitivity analysis.
 """
+
 from __future__ import annotations
 
 import math
@@ -23,9 +24,11 @@ _X = np.array([[0.0, 1.0], [1.0, 0.0]], dtype=complex)
 _Y = np.array([[0.0, -1j], [1j, 0.0]], dtype=complex)
 _Z = np.array([[1.0, 0.0], [0.0, -1.0]], dtype=complex)
 
+
 @dataclass
 class KrausChannel:
     """CPTP quantum channel represented as Kraus operators."""
+
     kraus_ops: List[np.ndarray]
     channel_type: str = "depolarizing"
     p: float = 0.0
@@ -54,6 +57,7 @@ class KrausChannel:
         """Identity channel (zero noise, flat spacetime)."""
         return cls(kraus_ops=[_I.copy()], channel_type="depolarizing", p=0.0, R_norm=0.0)
 
+
 def _make_depolarizing_kraus(p: float) -> List[np.ndarray]:
     """Depolarizing channel: E(rho) = (1-p)rho + (p/3)(X rho X + Y rho Y + Z rho Z)."""
     p = float(np.clip(p, 0.0, 1.0))
@@ -65,6 +69,7 @@ def _make_depolarizing_kraus(p: float) -> List[np.ndarray]:
         coeff * _Z,
     ]
 
+
 def _make_dephasing_kraus(p: float) -> List[np.ndarray]:
     """Dephasing channel: E(rho) = (1-p)rho + p*Z rho Z."""
     p = float(np.clip(p, 0.0, 1.0))
@@ -73,9 +78,11 @@ def _make_dephasing_kraus(p: float) -> List[np.ndarray]:
         math.sqrt(p) * _Z,
     ]
 
+
 @dataclass
 class BackgroundField:
     """Minimal representation of a classical spacetime background."""
+
     name: str
     G: np.ndarray
     ricci_matrix: np.ndarray
@@ -128,9 +135,9 @@ class MetricToChannelMap:
 
     def to_channel(self, bg: BackgroundField, channel_type: str | None = None) -> KrausChannel:
         """Convert a BackgroundField to a KrausChannel via the curvature-noise mapping.
-        
+
         Note: We map Riemann curvature norm (tidal forces) to the channel rather than
-        Ricci curvature, ensuring that Ricci-flat vacuums (e.g. Schwarzschild) still 
+        Ricci curvature, ensuring that Ricci-flat vacuums (e.g. Schwarzschild) still
         induce physical decoherence.
         """
         ctype = channel_type or self.channel_type
@@ -226,7 +233,7 @@ def _build_flat(D: int = 10) -> BackgroundField:
 
 def _build_schwarzschild(D: int = 10) -> BackgroundField:
     """Schwarzschild background: theoretically Ricci-flat vacuum, but contains non-zero Riemann tidal curvature."""
-    G = np.diag([-1.0/3.0] + [1.0] * (D - 1))
+    G = np.diag([-1.0 / 3.0] + [1.0] * (D - 1))
     ricci = np.zeros((D, D))  # Ricci-flat vacuum solution
     riemann = np.zeros((D, D))
     riemann[0, 0] = 0.001

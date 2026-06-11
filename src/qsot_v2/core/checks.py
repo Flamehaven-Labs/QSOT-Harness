@@ -1,4 +1,5 @@
 """Central registry for all experiment checks and required flags."""
+
 from __future__ import annotations
 
 # List of required checks that must pass (or not be skipped) to get a PASS verdict

@@ -1,4 +1,5 @@
 """ReportRenderer — renders ExperimentResult into JSON, Markdown, and PDF."""
+
 from __future__ import annotations
 
 import json
@@ -13,6 +14,7 @@ from qsot_v2.core.results import ExperimentResult
 
 logger = logging.getLogger(__name__)
 
+
 class ReportRenderer:
     """Handles rendering of experiment results to file artifacts."""
 
@@ -21,7 +23,9 @@ class ReportRenderer:
             templates_dir = Path(__file__).resolve().parent / "templates"
         self.env = Environment(loader=FileSystemLoader(str(templates_dir)))
 
-    def render(self, result: ExperimentResult, out_dir: Path, formats: List[str]) -> Dict[str, Path]:
+    def render(
+        self, result: ExperimentResult, out_dir: Path, formats: List[str]
+    ) -> Dict[str, Path]:
         """Render the result into all requested formats and save to out_dir."""
         out_dir.mkdir(parents=True, exist_ok=True)
         paths = {}

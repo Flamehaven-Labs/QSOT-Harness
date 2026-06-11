@@ -1,0 +1,3 @@
+# Normalize all text files to LF so Black/Ruff are consistent across OSes.
+* text=auto eol=lf
+*.png binary

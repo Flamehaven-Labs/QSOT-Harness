@@ -1,4 +1,5 @@
 """CLI entrypoint for running QSOT V2 experiments."""
+
 from __future__ import annotations
 
 import argparse
@@ -45,6 +46,7 @@ def parse_args() -> argparse.Namespace:
     )
     return parser.parse_args()
 
+
 def main() -> int:
     args = parse_args()
     config_path = Path(args.config)
@@ -87,7 +89,7 @@ def main() -> int:
     print("\n" + "=" * 70)
     print("Execution Summary:")
     print("-" * 70)
-    
+
     # Phase group reporting using central registry
     total_phases = len(PHASE_CHECKS)
     for idx, (phase_id, checks) in enumerate(PHASE_CHECKS.items(), 1):
@@ -99,7 +101,7 @@ def main() -> int:
             n_fail = sum(1 for s in phase_statuses if s == "FAIL")
             n_skipped = sum(1 for s in phase_statuses if s == "SKIPPED")
             n_degraded = sum(1 for s in phase_statuses if s == "DEGRADED_PASS")
-            
+
             status_str = "PASS"
             if n_fail > 0:
                 status_str = "FAIL"
@@ -107,16 +109,20 @@ def main() -> int:
                 status_str = "DEGRADED_PASS"
             elif n_skipped == len(checks):
                 status_str = "SKIPPED"
-                
-            phase_title = phase_id.split('_', 1)[1].replace('_', ' ').title()
-            print(f"[{idx}/{total_phases}] Phase {phase_num}: {phase_title} ... {status_str} (PASS: {n_pass}/{len(checks)})")
+
+            phase_title = phase_id.split("_", 1)[1].replace("_", " ").title()
+            print(
+                f"[{idx}/{total_phases}] Phase {phase_num}: {phase_title} ... {status_str} (PASS: {n_pass}/{len(checks)})"
+            )
         else:
-            phase_title = phase_id.split('_', 1)[1].replace('_', ' ').title()
+            phase_title = phase_id.split("_", 1)[1].replace("_", " ").title()
             print(f"[{idx}/{total_phases}] Phase {phase_num}: {phase_title} ... SKIPPED")
 
     print("-" * 70)
     print(f"✓ Overall Verdict: {result.verdict}")
-    print(f"  Passed: {result.passed} / Failed: {result.failed} / Skipped: {result.skipped} / Degraded: {result.degraded}")
+    print(
+        f"  Passed: {result.passed} / Failed: {result.failed} / Skipped: {result.skipped} / Degraded: {result.degraded}"
+    )
     print("-" * 70)
     for fmt, path in paths.items():
         print(f"→ Generated {fmt.upper()}: {path}")
@@ -124,6 +130,7 @@ def main() -> int:
 
     # Return 0 for PASS/DEGRADED_PASS, 1 for FAIL
     return 0 if result.verdict in ["PASS", "DEGRADED_PASS"] else 1
+
 
 if __name__ == "__main__":
     sys.exit(main())

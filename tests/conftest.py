@@ -1,4 +1,5 @@
 """Pytest configuration and fixtures."""
+
 from __future__ import annotations
 
 import tempfile
@@ -15,6 +16,7 @@ from qsot_v2.physics import BackgroundField
 def tmp_dir():
     with tempfile.TemporaryDirectory() as td:
         yield Path(td)
+
 
 @pytest.fixture
 def sample_config():
@@ -38,6 +40,7 @@ def sample_config():
         ],
         output=OutputConfig(formats=["json", "md"], dir="reports"),
     )
+
 
 @pytest.fixture
 def flat_background():

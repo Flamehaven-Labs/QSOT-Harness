@@ -1,4 +1,5 @@
 """Unit tests for the calibration manifest (Packet E)."""
+
 from __future__ import annotations
 
 from qsot_v2.core.calibration import build_calibration_manifest
@@ -28,8 +29,8 @@ def test_manifest_references_single_source_constants(sample_config):
 def test_manifest_covers_required_categories(sample_config):
     m = build_calibration_manifest(sample_config)
     # Each masterplan-required category is represented and carries a governs map.
-    assert "sensitivity_alpha" in m["free_parameters"]      # curvature-to-noise
-    assert "boost_beta" in m["free_parameters"]             # boost settings
+    assert "sensitivity_alpha" in m["free_parameters"]  # curvature-to-noise
+    assert "boost_beta" in m["free_parameters"]  # boost settings
     assert "kd_optimization_steps" in m["hardcoded_thresholds"]  # step count
     assert "ttm_epsilon_base" in m["hardcoded_thresholds"]  # threshold choices
     for group in (m["free_parameters"], m["hardcoded_thresholds"]):

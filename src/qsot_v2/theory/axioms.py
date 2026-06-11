@@ -1,5 +1,5 @@
-"""Kirkwood-Dirac and Temporal-State candidate principle axioms checks.
-"""
+"""Kirkwood-Dirac and Temporal-State candidate principle axioms checks."""
+
 from __future__ import annotations
 
 from typing import Callable, List
@@ -19,7 +19,7 @@ class TemporalStateAxiomVerifier:
         rho_a: np.ndarray,
         rho_b: np.ndarray,
         map_fn: Callable[[np.ndarray], np.ndarray],
-        alpha: float = 0.5
+        alpha: float = 0.5,
     ) -> bool:
         """Axiom: Linearity. The mapping over time must behave linearly over state mixtures."""
         mixed_rho = alpha * rho_a + (1 - alpha) * rho_b
@@ -36,9 +36,7 @@ class TemporalStateAxiomVerifier:
         return np.allclose(sum_k_dagger_k, np.eye(dim), atol=self.atol, rtol=self.rtol)
 
     def check_trace_preservation_on_states(
-        self,
-        kraus_operators: List[np.ndarray],
-        test_states: List[np.ndarray]
+        self, kraus_operators: List[np.ndarray], test_states: List[np.ndarray]
     ) -> bool:
         """Axiom: Actual trace preservation on target states. Tr(E(rho)) == 1."""
         if not kraus_operators or not test_states:
@@ -55,13 +53,13 @@ class TemporalStateAxiomVerifier:
         self,
         rho_i: np.ndarray,
         rho_next: np.ndarray,
-        channel_fn: Callable[[np.ndarray], np.ndarray]
+        channel_fn: Callable[[np.ndarray], np.ndarray],
     ) -> bool:
         """Verify 1-step trajectory replay matches channel: rho_{i+1} ≈ E_i(rho_i).
-        
+
         The conditionability check verifies trajectory and composed-channel consistency under the implemented model.
         It does not by itself prove a physical theorem about time.
-        
+
         conditionability check는 구현된 모델 안에서 trajectory와 합성 채널의 정합성을 확인한다.
         이것만으로 시간에 대한 물리학 정리를 증명하는 것은 아니다.
         """
@@ -72,30 +70,32 @@ class TemporalStateAxiomVerifier:
         rho_i: np.ndarray,
         rho_next_next: np.ndarray,
         channel_a: Callable[[np.ndarray], np.ndarray],
-        channel_b: Callable[[np.ndarray], np.ndarray]
+        channel_b: Callable[[np.ndarray], np.ndarray],
     ) -> bool:
         """Verify 2-step composition: rho_{i+2} ≈ E_{i+1}(E_i(rho_i)).
-        
+
         The conditionability check verifies trajectory and composed-channel consistency under the implemented model.
         It does not by itself prove a physical theorem about time.
-        
+
         conditionability check는 구현된 모델 안에서 trajectory와 합성 채널의 정합성을 확인한다.
         이것만으로 시간에 대한 물리학 정리를 증명하는 것은 아니다.
         """
-        return np.allclose(channel_b(channel_a(rho_i)), rho_next_next, atol=self.atol, rtol=self.rtol)
+        return np.allclose(
+            channel_b(channel_a(rho_i)), rho_next_next, atol=self.atol, rtol=self.rtol
+        )
 
     def check_composed_channel_consistency(
         self,
         rho0: np.ndarray,
         channel_a: Callable[[np.ndarray], np.ndarray],
         channel_b: Callable[[np.ndarray], np.ndarray],
-        composed_channel: Callable[[np.ndarray], np.ndarray]
+        composed_channel: Callable[[np.ndarray], np.ndarray],
     ) -> bool:
         """Verify composed evolution matches sequential composition: E_b(E_a(rho)) ≈ E_ba(rho).
-        
+
         The conditionability check verifies trajectory and composed-channel consistency under the implemented model.
         It does not by itself prove a physical theorem about time.
-        
+
         conditionability check는 구현된 모델 안에서 trajectory와 합성 채널의 정합성을 확인한다.
         이것만으로 시간에 대한 물리학 정리를 증명하는 것은 아니다.
         """

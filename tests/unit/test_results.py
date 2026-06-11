@@ -1,4 +1,5 @@
 """Unit tests for ExperimentResult class."""
+
 from __future__ import annotations
 
 import numpy as np
@@ -19,6 +20,7 @@ def test_result_verdict_pass():
     assert result.skipped == 0
     assert result.degraded == 0
 
+
 def test_result_verdict_fail():
     result = ExperimentResult(experiment_id="test")
     result.checks = {
@@ -28,6 +30,7 @@ def test_result_verdict_fail():
     assert result.verdict == "FAIL"
     assert result.passed == 1
     assert result.failed == 1
+
 
 def test_result_verdict_degraded():
     result = ExperimentResult(experiment_id="test")
@@ -39,6 +42,7 @@ def test_result_verdict_degraded():
     assert result.passed == 1
     assert result.degraded == 1
 
+
 def test_result_verdict_skipped_optional():
     result = ExperimentResult(experiment_id="test")
     result.checks = {
@@ -48,10 +52,12 @@ def test_result_verdict_skipped_optional():
     assert result.verdict == "DEGRADED_PASS"
     assert result.skipped == 1
 
+
 def test_set_verdict():
     result = ExperimentResult(experiment_id="test")
     result.set_verdict("DEGRADED_PASS")
     assert result.verdict == "DEGRADED_PASS"
+
 
 def test_sanitize_numpy():
     data = {
@@ -59,9 +65,7 @@ def test_sanitize_numpy():
         "float_val": np.float64(3.14),
         "bool_val": np.bool_(True),
         "arr_val": np.array([1, 2, 3]),
-        "nested": {
-            "nested_arr": np.array([[1.0, 2.0]])
-        }
+        "nested": {"nested_arr": np.array([[1.0, 2.0]])},
     }
     sanitized = _sanitize(data)
     assert isinstance(sanitized["int_val"], int)
@@ -74,6 +78,7 @@ def test_sanitize_numpy():
     assert sanitized["bool_val"] is True
     assert sanitized["arr_val"] == [1, 2, 3]
     assert sanitized["nested"]["nested_arr"] == [[1.0, 2.0]]
+
 
 def test_to_dict():
     result = ExperimentResult(experiment_id="test")

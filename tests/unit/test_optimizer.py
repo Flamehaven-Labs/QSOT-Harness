@@ -1,4 +1,5 @@
 """Unit tests for KD optimizer module."""
+
 from __future__ import annotations
 
 import tempfile
@@ -20,7 +21,7 @@ def test_kd_optimization():
         np.savez(state_path, rho_0=rho)
 
         res = run_kd_optimization(str(state_path), str(out_path), steps=5)
-        
+
         if TORCH_AVAILABLE:
             assert res is not None
             assert "kd_value" in res
@@ -29,6 +30,7 @@ def test_kd_optimization():
         else:
             assert res is None
             assert out_path.exists()
+
 
 def test_kd_missing_state():
     with tempfile.TemporaryDirectory() as td:

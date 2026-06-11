@@ -1,4 +1,5 @@
 """Phase 7: Scientific Audit."""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -20,7 +21,12 @@ def run_phase7(ctx: PhaseContext) -> None:
     rt = get_audit_runtime()
 
     presets_to_review = [
-        "flat", "ads5", "schwarzschild", "de_sitter", "eguchi_hanson", "godel_universe"
+        "flat",
+        "ads5",
+        "schwarzschild",
+        "de_sitter",
+        "eguchi_hanson",
+        "godel_universe",
     ]
 
     audit_results = {}
@@ -48,7 +54,7 @@ def run_phase7(ctx: PhaseContext) -> None:
             subject=subject,
             source=name,
             gate=verify_report["gate"],
-            report_text=f"Reviewing {name} background physics verification."
+            report_text=f"Reviewing {name} background physics verification.",
         )
 
         expected_minor_revision = {"de_sitter", "godel_universe"}

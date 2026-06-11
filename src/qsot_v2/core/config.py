@@ -1,4 +1,5 @@
 """ExperimentConfig: loads and validates experiment.yaml."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -7,14 +8,16 @@ from typing import List
 
 import yaml
 
-BACKGROUND_OPTIONS = frozenset({
-    "flat",
-    "schwarzschild",
-    "de_sitter",
-    "ads5",
-    "eguchi_hanson",
-    "godel_universe",
-})
+BACKGROUND_OPTIONS = frozenset(
+    {
+        "flat",
+        "schwarzschild",
+        "de_sitter",
+        "ads5",
+        "eguchi_hanson",
+        "godel_universe",
+    }
+)
 
 PHASE_IDS = (
     "phase0_temporal_axioms",
@@ -43,6 +46,7 @@ class OutputConfig:
 @dataclass
 class ExperimentConfig:
     """Validated configuration loaded from experiment.yaml."""
+
     experiment_id: str
     version: str
     description: str

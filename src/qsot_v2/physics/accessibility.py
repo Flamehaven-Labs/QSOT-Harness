@@ -2,6 +2,7 @@
 
 Accessibility computation module.
 """
+
 from __future__ import annotations
 
 import logging
@@ -13,6 +14,7 @@ _RISK_PENALTY = {"red": 0.20, "yellow": 0.10, "orange": 0.10, "green": 0.0}
 # Penalty caps (free calibration choices, surfaced in the calibration manifest).
 _MARKOV_PENALTY_CAP = 0.15
 _KD_PENALTY_CAP = 0.20
+
 
 def compute_accessibility_score(
     gate_report: dict,

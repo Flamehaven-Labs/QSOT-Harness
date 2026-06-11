@@ -1,4 +1,5 @@
 """Integration tests verifying full CLI execution."""
+
 from __future__ import annotations
 
 import json
@@ -11,26 +12,34 @@ from qsot_v2.cli.run_experiment import main
 def test_cli_execution(tmp_dir, monkeypatch):
     config_file = Path(__file__).resolve().parents[2] / "configs" / "experiment.yaml"
     out_dir = tmp_dir / "reports"
-    
+
     # Mock sys.argv to run inside the same Python process for coverage collection
-    monkeypatch.setattr(sys, "argv", [
-        "run_experiment.py",
-        "--config", str(config_file),
-        "--out", str(out_dir),
-        "--format", "json", "md",
-    ])
-    
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "run_experiment.py",
+            "--config",
+            str(config_file),
+            "--out",
+            str(out_dir),
+            "--format",
+            "json",
+            "md",
+        ],
+    )
+
     # Call main directly
     ret = main()
     assert ret in (0, 1)
-    
+
     # Check outputs
     result_json = out_dir / "result.json"
     report_md = out_dir / "report.md"
-    
+
     assert result_json.exists()
     assert report_md.exists()
-    
+
     # Verify JSON structure
     data = json.loads(result_json.read_text())
     assert data["experiment_id"] == "qgb-test-0057"
@@ -41,9 +50,15 @@ def test_cli_execution(tmp_dir, monkeypatch):
     assert "audit_context" in data
     sci = data["audit_context"]["scientific_audit"]
     for key in (
-        "backend_name", "backend_mode", "backend_available",
-        "runtime_backend", "runtime_backend_available",
-        "dependency_declared", "raw_score_scale", "normalized_score_scale", "claim_scope",
+        "backend_name",
+        "backend_mode",
+        "backend_available",
+        "runtime_backend",
+        "runtime_backend_available",
+        "dependency_declared",
+        "raw_score_scale",
+        "normalized_score_scale",
+        "claim_scope",
     ):
         assert key in sci, f"scientific_audit missing {key}"
     assert sci["backend_mode"] in ("mock", "external")
@@ -70,6 +85,7 @@ def test_cli_execution(tmp_dir, monkeypatch):
 
     # Packet D: evidence-class registry labels all major observation blocks.
     from qsot_v2.core.evidence import EVIDENCE_CLASSES
+
     ev = data["evidence_classes"]
     for cls in ev.values():
         assert cls in EVIDENCE_CLASSES
@@ -84,17 +100,28 @@ def test_cli_execution(tmp_dir, monkeypatch):
     assert ev["scientific_audit_reviews"] == "external_review_signal"
     assert ev["dqe_runtime"] == "optional_engine_check"
     # Background verification blocks are rule-based policy classifications.
-    for vk in ("flat_verify", "schwarzschild_verify", "desitter_verify",
-               "ads5_verify", "godel_verify", "eguchi_verify"):
+    for vk in (
+        "flat_verify",
+        "schwarzschild_verify",
+        "desitter_verify",
+        "ads5_verify",
+        "godel_verify",
+        "eguchi_verify",
+    ):
         assert ev[vk] == "policy_derived_classification", vk
     # Boost / curvature numerics are phenomenological model outputs.
     assert ev["ads_boost_info"] == "phenomenological_model_output"
     assert ev["schwarz_rest_info"] == "phenomenological_model_output"
     # No major observation block remains unlabeled (Packet D acceptance bar).
     from qsot_v2.core.evidence import OBSERVATION_EVIDENCE_CLASS
+
     INCIDENTAL = {
-        "phase0_sensitivity_used", "phase0_boost_beta_used", "rust_verify_stdout",
-        "dqe_note", "kd_note", "dqe_error",
+        "phase0_sensitivity_used",
+        "phase0_boost_beta_used",
+        "rust_verify_stdout",
+        "dqe_note",
+        "kd_note",
+        "dqe_error",
     }
     for key in data["observations"]:
         if key in INCIDENTAL:
@@ -106,8 +133,12 @@ def test_cli_execution(tmp_dir, monkeypatch):
 
     # Packet A: KD is reported flat-relative; raw negativity is not a proof and
     # the legacy magic-bound check is gone.
-    for k in ("kd_basis_optimization_ran", "kd_returns_basis_angles",
-              "kd_optimization_converged", "kd_relative_signal_recorded"):
+    for k in (
+        "kd_basis_optimization_ran",
+        "kd_returns_basis_angles",
+        "kd_optimization_converged",
+        "kd_relative_signal_recorded",
+    ):
         assert k in data["checks"], k
     assert "kd_flat_respects_lower_bound" not in data["checks"]
     assert "kd_desitter_contextuality_proxy_detected" not in data["checks"]

@@ -1,4 +1,5 @@
 """Phase 4: KD Governance."""
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -41,9 +42,13 @@ def run_phase4(ctx: PhaseContext) -> None:
     bg_desitter = BACKGROUND_BUILDERS["de_sitter"](D)
     c_desitter = QuantumCircuit(QuantumState.ground())
     c_desitter.evolve_through_background(bg_desitter, steps=2, sensitivity=ctx.config.sensitivity)
-    
+
     # Save flat final state (from Phase 1 state observations, fallback to ground if not found)
-    flat_rho = ctx.state.flat_final_rho if ctx.state.flat_final_rho is not None else QuantumState.ground().rho
+    flat_rho = (
+        ctx.state.flat_final_rho
+        if ctx.state.flat_final_rho is not None
+        else QuantumState.ground().rho
+    )
     np.savez(state_path, rho_0=np.array(flat_rho))
     kd_flat = run_kd_optimization(str(state_path), str(out_path), steps=KD_OPTIMIZATION_STEPS)
 
@@ -101,11 +106,13 @@ def run_phase4(ctx: PhaseContext) -> None:
             )
             # Structural: basis angles returned.
             ctx.result.checks["kd_returns_basis_angles"] = (
-                "PASS" if (
+                "PASS"
+                if (
                     "angles" in kd_desitter
                     and "basis_a" in kd_desitter["angles"]
                     and "basis_b" in kd_desitter["angles"]
-                ) else "FAIL"
+                )
+                else "FAIL"
             )
             # Convergence explicitly labeled: converged -> PASS, otherwise
             # DEGRADED_PASS (a non-converged but labeled relative proxy is
@@ -131,6 +138,7 @@ def run_phase4(ctx: PhaseContext) -> None:
         import flame_torch  # noqa: F401
         import torch  # noqa: F401
         from flame_torch.governance.omega_core import omega  # noqa: F401
+
         dqe_engine_available = True
     except ImportError:
         dqe_engine_available = False
@@ -139,6 +147,7 @@ def run_phase4(ctx: PhaseContext) -> None:
         try:
             import torch
             from flame_torch.governance.omega_core import omega
+
             purities = ctx.result.observations.get("flat_rest_purities", [1.0] * 4)
             purity_tensor = torch.tensor(purities, dtype=torch.float64)
             omega.process_tensor("purity_flat", purity_tensor, spec="steps")
@@ -148,10 +157,13 @@ def run_phase4(ctx: PhaseContext) -> None:
             ctx.result.observations["dqe_error"] = str(e)
     else:
         ctx.result.checks["dqe_covenant_validated"] = "SKIPPED"
-        ctx.result.observations["dqe_note"] = "Optional differentiable governance engine (flame_torch) not installed."
+        ctx.result.observations["dqe_note"] = (
+            "Optional differentiable governance engine (flame_torch) not installed."
+        )
 
     # Structured backend metadata (replaces free-text-only DQE status).
     from qsot_v2.core.evidence import RUNTIME_DEPENDENCY_STATUS
+
     dqe_backend_name = DQE_BACKEND_NAME if dqe_engine_available else "unavailable"
     ctx.result.audit_context["dqe_covenant"] = {
         "backend_name": dqe_backend_name,

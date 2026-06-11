@@ -1,4 +1,5 @@
 """Phase 6: Rust turbovec."""
+
 from __future__ import annotations
 
 import json
@@ -72,9 +73,17 @@ def run_phase6(ctx: PhaseContext) -> None:
     if rust_ran_successfully and result_path.exists():
         try:
             res_data = json.loads(result_path.read_text())
-            ctx.result.checks["rust_turbovec_verdict_is_pass"] = "PASS" if res_data["verdict"] == "PASS" else "FAIL"
-            ctx.result.checks["rust_turbovec_ingested_correct_count"] = "PASS" if res_data["checks"]["turbovec_ingested_correct_count"] else "FAIL"
-            ctx.result.checks["rust_turbovec_quantization_error_within_bounds"] = "PASS" if res_data["checks"]["turbovec_quantization_error_within_bounds"] else "FAIL"
+            ctx.result.checks["rust_turbovec_verdict_is_pass"] = (
+                "PASS" if res_data["verdict"] == "PASS" else "FAIL"
+            )
+            ctx.result.checks["rust_turbovec_ingested_correct_count"] = (
+                "PASS" if res_data["checks"]["turbovec_ingested_correct_count"] else "FAIL"
+            )
+            ctx.result.checks["rust_turbovec_quantization_error_within_bounds"] = (
+                "PASS"
+                if res_data["checks"]["turbovec_quantization_error_within_bounds"]
+                else "FAIL"
+            )
             ctx.result.observations["rust_turbovec_result"] = res_data
         except Exception as ex:
             ctx.result.checks["rust_turbovec_verdict_is_pass"] = "FAIL"
@@ -86,7 +95,9 @@ def run_phase6(ctx: PhaseContext) -> None:
         ctx.result.checks["rust_turbovec_verdict_is_pass"] = "FAIL"
         ctx.result.checks["rust_turbovec_ingested_correct_count"] = "FAIL"
         ctx.result.checks["rust_turbovec_quantization_error_within_bounds"] = "FAIL"
-        ctx.result.observations["rust_turbovec_note"] = "Rust verification did not run or failed to generate result."
+        ctx.result.observations["rust_turbovec_note"] = (
+            "Rust verification did not run or failed to generate result."
+        )
 
     # Clean up
     if test_vectors_path.exists():

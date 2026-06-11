@@ -11,6 +11,7 @@ Normalization authority lives here: every numeric output is normalized to the
 unit interval inside this module so phase code only serializes and evaluates
 verdicts (it never performs scale conversion).
 """
+
 from __future__ import annotations
 
 import logging
@@ -59,6 +60,7 @@ def _external_audit_available() -> bool:
     """Runtime check: is the external review *engine* importable?"""
     try:
         import spar_framework.engine  # noqa: F401
+
         return True
     except ImportError:
         return False
@@ -75,6 +77,7 @@ def _external_runtime_available() -> bool:
     """
     try:
         import spar_domain_physics.runtime  # noqa: F401
+
         return True
     except ImportError:
         return False
@@ -168,6 +171,7 @@ class AuditRuntime:
 def get_audit_runtime() -> AuditRuntime:
     try:
         from spar_domain_physics.runtime import get_review_runtime as get_real_runtime
+
         return get_real_runtime()
     except ImportError:
         return AuditRuntime()
@@ -194,12 +198,14 @@ def run_scientific_audit(
     report_text: str,
 ) -> ScientificAuditResult:
     from qsot_v2.theory.claim_boundary import CLAIM_BOUNDARY
+
     is_empty = not subject or all(k == "claim_boundary" for k in subject)
     if "claim_boundary" not in subject:
         subject["claim_boundary"] = CLAIM_BOUNDARY
 
     try:
         from spar_framework.engine import run_review as run_real_review
+
         res = run_real_review(
             runtime=runtime,
             subject=subject,

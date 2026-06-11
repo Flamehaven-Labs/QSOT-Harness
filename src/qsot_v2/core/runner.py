@@ -1,4 +1,5 @@
 """ExperimentRunner — runs 8 phases (Phase 0 + 7 verification phases) and 50 checks based on config."""
+
 from __future__ import annotations
 
 import logging
@@ -65,6 +66,7 @@ class ExperimentRunner:
 
         # Surface the calibration manifest (free / hand-set parameters).
         from qsot_v2.core.calibration import build_calibration_manifest
+
         self.result.calibration = build_calibration_manifest(self.config)
 
         # Compute overall verdict

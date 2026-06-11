@@ -2,6 +2,7 @@
 
 Pure numpy implementation: no external quantum framework required.
 """
+
 from __future__ import annotations
 
 import math
@@ -16,9 +17,11 @@ _X = np.array([[0.0, 1.0], [1.0, 0.0]], dtype=complex)
 _Y = np.array([[0.0, -1j], [1j, 0.0]], dtype=complex)
 _Z = np.array([[1.0, 0.0], [0.0, -1.0]], dtype=complex)
 
+
 @dataclass
 class QuantumState:
     """Single-qubit density matrix wrapper."""
+
     rho: np.ndarray
 
     def __post_init__(self) -> None:
@@ -76,6 +79,7 @@ class QuantumState:
         ry = 2.0 * self.rho[0, 1].imag
         rz = float((self.rho[0, 0] - self.rho[1, 1]).real)
         return np.array([rx, ry, rz])
+
 
 class QuantumCircuit:
     """Lightweight single-qubit circuit simulator."""

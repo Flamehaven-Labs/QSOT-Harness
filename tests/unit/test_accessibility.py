@@ -1,4 +1,5 @@
 """Unit tests for compute_accessibility_score."""
+
 from __future__ import annotations
 
 import pytest
@@ -11,10 +12,12 @@ def test_gate_fail():
     assert res["final_access_score"] == 0.0
     assert res["gate_pass"] is False
 
+
 def test_passes_fully():
     res = compute_accessibility_score(gate_report={"pass": True, "gate": "PASS"})
     assert res["final_access_score"] == 1.0
     assert res["gate_pass"] is True
+
 
 def test_penalties():
     # Markov penalty

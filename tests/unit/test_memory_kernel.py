@@ -1,7 +1,9 @@
 """Unit tests for memory_kernel TTM calculations."""
+
 from __future__ import annotations
 
 import numpy as np
+import pytest
 
 from qsot_v2.physics import KrausChannel
 from qsot_v2.physics.memory_kernel import (
@@ -17,11 +19,13 @@ def test_dynamic_ttm_threshold():
     assert val_0 == 1e-6
     assert val_1 < val_0
 
+
 def test_trace_dist():
     A = np.array([[1.0, 0.0], [0.0, 0.0]], dtype=complex)
     B = np.array([[0.0, 0.0], [0.0, 1.0]], dtype=complex)
     assert trace_dist(A, B) == pytest.approx(1.0)
     assert trace_dist(A, A) == pytest.approx(0.0)
+
 
 def test_compute_memory_kernel():
     rhos = [
@@ -34,4 +38,3 @@ def test_compute_memory_kernel():
     assert res["nm_measure"] > 0.0
     assert res["depth"] > 0
     assert len(res["profile"]) == 2
-import pytest

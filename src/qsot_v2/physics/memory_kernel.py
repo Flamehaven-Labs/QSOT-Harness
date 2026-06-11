@@ -2,6 +2,7 @@
 
 Ported from Flamehaven-TOE.
 """
+
 from __future__ import annotations
 
 from typing import Any, Dict, List
@@ -11,10 +12,13 @@ import numpy as np
 _ALPHA_DEFAULT: float = 0.5
 _EPSILON_BASE: float = 1e-6
 
+
 def dynamic_ttm_threshold(ricci_norm: float, alpha: float = _ALPHA_DEFAULT) -> float:
     """Compute dynamic TTM threshold: epsilon_eff = epsilon_base * exp(-alpha * |R|)."""
     import math
+
     return _EPSILON_BASE * math.exp(-alpha * abs(ricci_norm))
+
 
 def trace_dist(A: np.ndarray, B: np.ndarray) -> float:
     """Compute Trace Distance: 0.5 * sum(|eigenvalues(A - B)|)."""
@@ -22,6 +26,7 @@ def trace_dist(A: np.ndarray, B: np.ndarray) -> float:
     diff = (diff + diff.conj().T) / 2.0  # enforce Hermitian for stability
     vals = np.linalg.eigvalsh(diff)
     return 0.5 * float(np.sum(np.abs(vals)))
+
 
 def compute_memory_kernel(
     rhos: List[np.ndarray],

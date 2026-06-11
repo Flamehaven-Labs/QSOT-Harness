@@ -1,4 +1,5 @@
 """Unit tests for the evidence-class registry (Packet D)."""
+
 from __future__ import annotations
 
 import pytest
@@ -22,10 +23,10 @@ def test_runtime_dependency_status_is_vocabulary():
 
 def test_registry_filters_incidental_observations():
     observations = {
-        "kd_flat": {"kd_value": -0.12},        # major -> labeled
-        "phase0_sensitivity_used": 0.1,         # incidental -> omitted
-        "rust_verify_stdout": "PASS",           # incidental -> omitted
-        "memory_kernel": {"depth": 1},          # major -> labeled
+        "kd_flat": {"kd_value": -0.12},  # major -> labeled
+        "phase0_sensitivity_used": 0.1,  # incidental -> omitted
+        "rust_verify_stdout": "PASS",  # incidental -> omitted
+        "memory_kernel": {"depth": 1},  # major -> labeled
     }
     registry = build_evidence_registry(observations)
     assert registry == {

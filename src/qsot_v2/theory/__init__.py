@@ -1,5 +1,5 @@
-"""Theory layer package.
-"""
+"""Theory layer package."""
+
 from __future__ import annotations
 
 from qsot_v2.theory.axioms import TemporalStateAxiomVerifier
