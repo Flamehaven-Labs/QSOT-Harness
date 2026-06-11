@@ -1,0 +1,854 @@
+{
+  "schema_id": "compliance.qsot_v2.experiment_result.v2",
+  "experiment_id": "qgb-test-0057",
+  "generated_at": "2026-06-11T17:35:00.640969+00:00",
+  "verdict": "DEGRADED_PASS",
+  "claim_boundary": {
+    "external_physical_validity_claimed": false,
+    "execution_proves_new_law": false,
+    "model_output_consistency_only": true,
+    "model_has_phenomenological_channel_map": true,
+    "external_experimental_validation_provided": false
+  },
+  "audit_context": {
+    "dqe_covenant": {
+      "backend_name": "unavailable",
+      "backend_available": false,
+      "dependency_declared": false,
+      "claim_scope": "optional_engine_check_only",
+      "evidence_class": "runtime_dependency_status"
+    },
+    "scientific_audit": {
+      "backend_name": "spar_framework",
+      "backend_mode": "external",
+      "backend_available": true,
+      "runtime_backend": "spar_domain_physics",
+      "runtime_backend_available": true,
+      "dependency_declared": true,
+      "raw_score_scale": "percentage",
+      "normalized_score_scale": "unit_interval",
+      "claim_scope": "external_review_signal_only",
+      "evidence_class": "runtime_dependency_status"
+    }
+  },
+  "calibration": {
+    "note": "Free / hand-set parameters governing model outputs. These are calibration choices, not first-principles constants. Realized per-run values appear in the referenced observations.",
+    "free_parameters": {
+      "sensitivity_alpha": {
+        "value": 0.1,
+        "source": "config (experiment.yaml: sensitivity)",
+        "role": "alpha in p = 1 - exp(-alpha * ||Riemann||_F); curvature-to-noise mapping",
+        "governs": [
+          "background purity decay",
+          "entropy growth",
+          "p_curvature",
+          "phase2_curvature_noise checks"
+        ],
+        "realized_in": [
+          "ads_boost_info.alpha",
+          "schwarz_rest_info.alpha"
+        ]
+      },
+      "boost_beta": {
+        "value": 0.5,
+        "source": "config (experiment.yaml: boost_beta)",
+        "role": "observer velocity beta; gamma_boost = 1 / sqrt(1 - beta^2)",
+        "governs": [
+          "gamma_boost",
+          "p_effective",
+          "phase3_boosts checks"
+        ],
+        "realized_in": [
+          "ads_boost_info.gamma_boost",
+          "phase0_boost_beta_used"
+        ]
+      },
+      "evolution_steps": {
+        "value": 3,
+        "source": "config (experiment.yaml: steps)",
+        "role": "number of channel applications per background evolution (phase1/phase2)",
+        "governs": [
+          "purity / entropy trajectories"
+        ],
+        "realized_in": [
+          "flat_rest_purities",
+          "schwarz_purity",
+          "desitter_purity",
+          "ads_purity",
+          "eguchi_purity"
+        ]
+      }
+    },
+    "hardcoded_thresholds": {
+      "kd_optimization_steps": {
+        "value": 50,
+        "source": "hardcoded (phase4.KD_OPTIMIZATION_STEPS)",
+        "role": "Adam step budget for KD basis optimization; current runs do not converge within it",
+        "governs": [
+          "kd_optimization_converged",
+          "kd_delta"
+        ],
+        "realized_in": [
+          "kd_flat.convergence",
+          "kd_desitter.convergence"
+        ]
+      },
+      "ttm_epsilon_base": {
+        "value": 1e-06,
+        "source": "hardcoded (memory_kernel._EPSILON_BASE)",
+        "role": "base TTM deviation threshold; epsilon_eff = epsilon_base * exp(-alpha * |R|)",
+        "governs": [
+          "memory_kernel depth",
+          "memory_kernel_model_trajectory"
+        ],
+        "realized_in": [
+          "memory_kernel.threshold_used"
+        ]
+      },
+      "ttm_alpha": {
+        "value": 0.5,
+        "source": "hardcoded (memory_kernel._ALPHA_DEFAULT)",
+        "role": "curvature scaling of the TTM threshold",
+        "governs": [
+          "dynamic_ttm_threshold"
+        ],
+        "realized_in": [
+          "memory_kernel.threshold_used",
+          "memory_kernel_model_trajectory.threshold_used"
+        ]
+      },
+      "accessibility_markov_penalty_cap": {
+        "value": 0.15,
+        "source": "hardcoded (accessibility._MARKOV_PENALTY_CAP)",
+        "role": "maximum non-Markovian penalty on the accessibility score",
+        "governs": [
+          "accessibility_penalizes_non_markovianity"
+        ],
+        "realized_in": [
+          "accessibility_scores.score_nm.markov_penalty"
+        ]
+      },
+      "accessibility_kd_penalty_cap": {
+        "value": 0.2,
+        "source": "hardcoded (accessibility._KD_PENALTY_CAP)",
+        "role": "maximum KD-negativity penalty on the accessibility score",
+        "governs": [
+          "accessibility_penalizes_kd_negativity"
+        ],
+        "realized_in": [
+          "accessibility_scores.score_kd.kd_penalty"
+        ]
+      }
+    },
+    "notable_magic_constants": {
+      "schwarzschild_g00": {
+        "source": "hardcoded (channels._build_schwarzschild)",
+        "role": "metric g00 -> gamma_grav = 1 / sqrt(-g00); corresponds to a fixed r/M ratio",
+        "governs": [
+          "schwarzschild gamma_gravitational"
+        ],
+        "realized_in": [
+          "schwarz_rest_info.g00"
+        ],
+        "caveat": "magic constant (H4): the physical r/M interpretation is not documented in code"
+      }
+    }
+  },
+  "evidence_classes": {
+    "linearity_max_deviation": "mathematical_invariant",
+    "cptp_completeness_max_deviation": "mathematical_invariant",
+    "trace_preservation_max_deviation": "mathematical_invariant",
+    "composed_channel_max_deviation": "mathematical_invariant",
+    "sequential_replay_max_deviation": "mathematical_invariant",
+    "two_step_conditionability_max_deviation": "mathematical_invariant",
+    "phase0_scenarios": "mathematical_invariant",
+    "flat_rest_purities": "phenomenological_model_output",
+    "flat_rest_entropies": "phenomenological_model_output",
+    "flat_verify": "policy_derived_classification",
+    "flat_boost_purities": "phenomenological_model_output",
+    "schwarz_purity": "phenomenological_model_output",
+    "desitter_purity": "phenomenological_model_output",
+    "ads_purity": "phenomenological_model_output",
+    "eguchi_purity": "phenomenological_model_output",
+    "schwarz_entropy": "phenomenological_model_output",
+    "desitter_entropy": "phenomenological_model_output",
+    "ads_entropy": "phenomenological_model_output",
+    "eguchi_entropy": "phenomenological_model_output",
+    "desitter_verify": "policy_derived_classification",
+    "godel_verify": "policy_derived_classification",
+    "eguchi_verify": "policy_derived_classification",
+    "schwarzschild_verify": "policy_derived_classification",
+    "ads5_verify": "policy_derived_classification",
+    "ads_boost_info": "phenomenological_model_output",
+    "schwarz_rest_info": "phenomenological_model_output",
+    "kd_flat": "phenomenological_model_output",
+    "kd_desitter": "phenomenological_model_output",
+    "kd_delta": "phenomenological_model_output",
+    "dqe_runtime": "optional_engine_check",
+    "memory_kernel": "synthetic_harness_output",
+    "memory_kernel_model_trajectory": "phenomenological_model_output",
+    "accessibility_scores": "synthetic_harness_output",
+    "rust_turbovec_result": "synthetic_harness_output",
+    "scientific_audit_reviews": "external_review_signal"
+  },
+  "summary": {
+    "total": 50,
+    "pass": 48,
+    "fail": 0,
+    "skipped": 1,
+    "degraded_pass": 1
+  },
+  "checks": {
+    "temporal_axiom_linearity_holds": "PASS",
+    "temporal_axiom_cptp_completeness_holds": "PASS",
+    "temporal_axiom_trace_preservation_holds": "PASS",
+    "temporal_axiom_conditionability_holds": "PASS",
+    "temporal_axiom_density_validity_holds": "PASS",
+    "flat_rest_purity_is_1": "PASS",
+    "flat_rest_entropy_is_0": "PASS",
+    "flat_gate_passes": "PASS",
+    "flat_ctc_is_clear": "PASS",
+    "flat_boost_purity_is_1": "PASS",
+    "schwarzschild_purity_decays": "PASS",
+    "desitter_purity_decays": "PASS",
+    "ads5_purity_decays": "PASS",
+    "eguchi_hanson_purity_decays": "PASS",
+    "schwarzschild_entropy_positive": "PASS",
+    "desitter_entropy_positive": "PASS",
+    "ads5_entropy_positive": "PASS",
+    "eguchi_hanson_entropy_positive": "PASS",
+    "desitter_gate_fails": "PASS",
+    "godel_gate_fails_and_ctc_detected": "PASS",
+    "eguchi_hanson_gate_fails_gs": "PASS",
+    "schwarzschild_curvature_positive": "PASS",
+    "desitter_curvature_positive": "PASS",
+    "ads5_curvature_positive": "PASS",
+    "eguchi_hanson_curvature_positive": "PASS",
+    "boost_accelerates_purity_decay": "PASS",
+    "boost_amplifies_noise_parameter": "PASS",
+    "gamma_boost_greater_than_1": "PASS",
+    "gamma_grav_greater_than_1": "PASS",
+    "gamma_total_combines_effects": "PASS",
+    "kd_basis_optimization_ran": "PASS",
+    "kd_returns_basis_angles": "PASS",
+    "kd_optimization_converged": "DEGRADED_PASS",
+    "kd_relative_signal_recorded": "PASS",
+    "dqe_covenant_validated": "SKIPPED",
+    "memory_kernel_selftest_detects_injected_backflow": "PASS",
+    "accessibility_passes_fully": "PASS",
+    "accessibility_fails_fully": "PASS",
+    "accessibility_penalizes_non_markovianity": "PASS",
+    "accessibility_penalizes_kd_negativity": "PASS",
+    "rust_verify_binary_runs": "PASS",
+    "rust_turbovec_verdict_is_pass": "PASS",
+    "rust_turbovec_ingested_correct_count": "PASS",
+    "rust_turbovec_quantization_error_within_bounds": "PASS",
+    "scientific_audit_accepts_flat": "PASS",
+    "scientific_audit_accepts_ads5": "PASS",
+    "scientific_audit_accepts_schwarzschild": "PASS",
+    "scientific_audit_confirms_de_sitter_expected_fail": "PASS",
+    "scientific_audit_confirms_eguchi_hanson_expected_revision": "PASS",
+    "scientific_audit_confirms_godel_universe_expected_fail": "PASS"
+  },
+  "observations": {
+    "linearity_max_deviation": 1.1102230246251565e-16,
+    "cptp_completeness_max_deviation": 1.5700924586837752e-16,
+    "trace_preservation_max_deviation": 4.440892098500626e-16,
+    "composed_channel_max_deviation": 0.0,
+    "sequential_replay_max_deviation": 0.0,
+    "two_step_conditionability_max_deviation": 0.0,
+    "phase0_sensitivity_used": 0.1,
+    "phase0_boost_beta_used": 0.5,
+    "phase0_scenarios": [
+      {
+        "background": "flat",
+        "observer_velocity": 0.0,
+        "channel_type": "depolarizing",
+        "linearity_deviation": 0.0,
+        "cptp_deviation": 0.0,
+        "trace_max_deviation": 2.220446049250313e-16,
+        "composed_channel_deviation": 0.0,
+        "sequential_replay_deviation": 0.0,
+        "two_step_conditionability_deviation": 0.0,
+        "density_validity": true
+      },
+      {
+        "background": "flat",
+        "observer_velocity": 0.5,
+        "channel_type": "dephasing",
+        "linearity_deviation": 0.0,
+        "cptp_deviation": 0.0,
+        "trace_max_deviation": 2.220446049250313e-16,
+        "composed_channel_deviation": 0.0,
+        "sequential_replay_deviation": 0.0,
+        "two_step_conditionability_deviation": 0.0,
+        "density_validity": true
+      },
+      {
+        "background": "schwarzschild",
+        "observer_velocity": 0.0,
+        "channel_type": "depolarizing",
+        "linearity_deviation": 1.1102230246251565e-16,
+        "cptp_deviation": 0.0,
+        "trace_max_deviation": 4.440892098500626e-16,
+        "composed_channel_deviation": 0.0,
+        "sequential_replay_deviation": 0.0,
+        "two_step_conditionability_deviation": 0.0,
+        "density_validity": true
+      },
+      {
+        "background": "de_sitter",
+        "observer_velocity": 0.0,
+        "channel_type": "dephasing",
+        "linearity_deviation": 0.0,
+        "cptp_deviation": 1.5700924586837752e-16,
+        "trace_max_deviation": 2.220446049250313e-16,
+        "composed_channel_deviation": 0.0,
+        "sequential_replay_deviation": 0.0,
+        "two_step_conditionability_deviation": 0.0,
+        "density_validity": true
+      },
+      {
+        "background": "eguchi_hanson",
+        "observer_velocity": 0.0,
+        "channel_type": "depolarizing",
+        "linearity_deviation": 5.551115123125783e-17,
+        "cptp_deviation": 0.0,
+        "trace_max_deviation": 4.440892098500626e-16,
+        "composed_channel_deviation": 0.0,
+        "sequential_replay_deviation": 0.0,
+        "two_step_conditionability_deviation": 0.0,
+        "density_validity": true
+      }
+    ],
+    "flat_rest_purities": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "flat_rest_entropies": [
+      -0.0,
+      -0.0,
+      -0.0,
+      -0.0
+    ],
+    "flat_verify": {
+      "paper_title": "[bg:flat]",
+      "hypothesis": "Direct background verification: flat",
+      "sr9": 1.0,
+      "di2": 0.0,
+      "gate": "PASS",
+      "verdict": {
+        "risk": "green",
+        "decree": "approve",
+        "admissibility_total": 1.0,
+        "gs_score": 1.0,
+        "b_score": 1.0,
+        "si_score": 1.0,
+        "gs_si_balance": 1.0,
+        "agent_reports": []
+      },
+      "physics": {
+        "beta_status": "pass",
+        "beta_G_norm": 0.0,
+        "beta_B_norm": 0.0,
+        "beta_Phi_norm": 0.0,
+        "drift_admissibility": 1.0,
+        "drift_divergence": 0.0,
+        "pde_status": "skip",
+        "ricci_norm": 0.0,
+        "riemann_norm": 0.0,
+        "eft_m_kk_gev": null,
+        "brst_proxy_ok": true,
+        "dimension_check": true,
+        "gs_anomaly_flag": false,
+        "c_total": 0.0,
+        "c_moduli": 0.0,
+        "gs_p1_R": 0.0,
+        "gs_p1_F": 0.0,
+        "gs_residual": 0.0,
+        "ctc_status": "CLEAR",
+        "ctc_discriminant": 0.0,
+        "ctc_order_parameter": 0.0,
+        "ctc_k0_timelike": false
+      }
+    },
+    "flat_boost_purities": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "schwarz_purity": 0.9994346211351026,
+    "desitter_purity": 0.6360680891448688,
+    "ads_purity": 0.6776355966184198,
+    "eguchi_purity": 0.9988698549640613,
+    "schwarz_entropy": 0.0025932038484574923,
+    "desitter_entropy": 0.5501174194306857,
+    "ads_entropy": 0.5031307364024421,
+    "eguchi_entropy": 0.004793229964460515,
+    "desitter_verify": {
+      "paper_title": "[bg:de_sitter]",
+      "hypothesis": "Direct background verification: de_sitter",
+      "sr9": 0.2,
+      "di2": 0.8,
+      "gate": "FAIL",
+      "verdict": {
+        "risk": "red",
+        "decree": "reject_and_log",
+        "admissibility_total": 0.2,
+        "gs_score": 0.0,
+        "b_score": 1.0,
+        "si_score": 0.0,
+        "gs_si_balance": 0.0,
+        "agent_reports": []
+      },
+      "physics": {
+        "beta_status": "fail",
+        "beta_G_norm": 0.5,
+        "beta_B_norm": 0.0,
+        "beta_Phi_norm": 0.5,
+        "drift_admissibility": 0.2,
+        "drift_divergence": 0.8,
+        "pde_status": "skip",
+        "ricci_norm": 1.5811388300841898,
+        "riemann_norm": 1.5811388300841898,
+        "eft_m_kk_gev": null,
+        "brst_proxy_ok": false,
+        "dimension_check": true,
+        "gs_anomaly_flag": false,
+        "c_total": 0.0,
+        "c_moduli": 0.0,
+        "gs_p1_R": 0.0,
+        "gs_p1_F": 0.0,
+        "gs_residual": 0.0,
+        "ctc_status": "CLEAR",
+        "ctc_discriminant": 0.0,
+        "ctc_order_parameter": 0.0,
+        "ctc_k0_timelike": false
+      }
+    },
+    "godel_verify": {
+      "paper_title": "[bg:godel_universe]",
+      "hypothesis": "Direct background verification: godel_universe",
+      "sr9": 0.0,
+      "di2": 1.0,
+      "gate": "FAIL",
+      "verdict": {
+        "risk": "red",
+        "decree": "reject_and_log",
+        "admissibility_total": 0.0,
+        "gs_score": 0.0,
+        "b_score": 1.0,
+        "si_score": 0.0,
+        "gs_si_balance": 0.0,
+        "agent_reports": []
+      },
+      "physics": {
+        "beta_status": "fail",
+        "beta_G_norm": 0.3,
+        "beta_B_norm": 0.0,
+        "beta_Phi_norm": 0.3,
+        "drift_admissibility": 0.0,
+        "drift_divergence": 1.0,
+        "pde_status": "skip",
+        "ricci_norm": 0.9486832980505138,
+        "riemann_norm": 0.9486832980505138,
+        "eft_m_kk_gev": null,
+        "brst_proxy_ok": false,
+        "dimension_check": true,
+        "gs_anomaly_flag": false,
+        "c_total": 0.0,
+        "c_moduli": 0.0,
+        "gs_p1_R": 0.0,
+        "gs_p1_F": 0.0,
+        "gs_residual": 0.0,
+        "ctc_status": "DETECTED",
+        "ctc_discriminant": 0.0,
+        "ctc_order_parameter": 0.0,
+        "ctc_k0_timelike": false
+      }
+    },
+    "eguchi_verify": {
+      "paper_title": "[bg:eguchi_hanson]",
+      "hypothesis": "Direct background verification: eguchi_hanson",
+      "sr9": 0.1,
+      "di2": 0.9,
+      "gate": "FAIL",
+      "verdict": {
+        "risk": "red",
+        "decree": "reject_and_log",
+        "admissibility_total": 0.1,
+        "gs_score": 0.0,
+        "b_score": 1.0,
+        "si_score": 0.0,
+        "gs_si_balance": 0.0,
+        "agent_reports": []
+      },
+      "physics": {
+        "beta_status": "fail",
+        "beta_G_norm": 0.0,
+        "beta_B_norm": 0.0,
+        "beta_Phi_norm": 0.0,
+        "drift_admissibility": 0.1,
+        "drift_divergence": 0.9,
+        "pde_status": "skip",
+        "ricci_norm": 0.0,
+        "riemann_norm": 0.00282842712474619,
+        "eft_m_kk_gev": null,
+        "brst_proxy_ok": false,
+        "dimension_check": true,
+        "gs_anomaly_flag": true,
+        "c_total": 0.0,
+        "c_moduli": 0.0,
+        "gs_p1_R": 2.0,
+        "gs_p1_F": 0.0,
+        "gs_residual": 2.0,
+        "ctc_status": "CLEAR",
+        "ctc_discriminant": 0.0,
+        "ctc_order_parameter": 0.0,
+        "ctc_k0_timelike": false
+      }
+    },
+    "schwarzschild_verify": {
+      "paper_title": "[bg:schwarzschild]",
+      "hypothesis": "Direct background verification: schwarzschild",
+      "sr9": 1.0,
+      "di2": 0.0,
+      "gate": "PASS",
+      "verdict": {
+        "risk": "green",
+        "decree": "approve",
+        "admissibility_total": 1.0,
+        "gs_score": 1.0,
+        "b_score": 1.0,
+        "si_score": 1.0,
+        "gs_si_balance": 1.0,
+        "agent_reports": []
+      },
+      "physics": {
+        "beta_status": "pass",
+        "beta_G_norm": 0.0,
+        "beta_B_norm": 0.0,
+        "beta_Phi_norm": 0.0,
+        "drift_admissibility": 1.0,
+        "drift_divergence": 0.0,
+        "pde_status": "skip",
+        "ricci_norm": 0.0,
+        "riemann_norm": 0.001414213562373095,
+        "eft_m_kk_gev": null,
+        "brst_proxy_ok": true,
+        "dimension_check": true,
+        "gs_anomaly_flag": false,
+        "c_total": 0.0,
+        "c_moduli": 0.0,
+        "gs_p1_R": 0.0,
+        "gs_p1_F": 0.0,
+        "gs_residual": 0.0,
+        "ctc_status": "CLEAR",
+        "ctc_discriminant": 0.0,
+        "ctc_order_parameter": 0.0,
+        "ctc_k0_timelike": false
+      }
+    },
+    "ads5_verify": {
+      "paper_title": "[bg:ads5]",
+      "hypothesis": "Direct background verification: ads5",
+      "sr9": 1.0,
+      "di2": 0.0,
+      "gate": "PASS",
+      "verdict": {
+        "risk": "green",
+        "decree": "approve",
+        "admissibility_total": 1.0,
+        "gs_score": 1.0,
+        "b_score": 1.0,
+        "si_score": 1.0,
+        "gs_si_balance": 1.0,
+        "agent_reports": []
+      },
+      "physics": {
+        "beta_status": "pass",
+        "beta_G_norm": 0.0,
+        "beta_B_norm": 0.0,
+        "beta_Phi_norm": 0.0,
+        "drift_admissibility": 1.0,
+        "drift_divergence": 0.0,
+        "pde_status": "skip",
+        "ricci_norm": 1.264911064067352,
+        "riemann_norm": 1.264911064067352,
+        "eft_m_kk_gev": null,
+        "brst_proxy_ok": true,
+        "dimension_check": true,
+        "gs_anomaly_flag": false,
+        "c_total": 0.0,
+        "c_moduli": 0.0,
+        "gs_p1_R": 0.0,
+        "gs_p1_F": 0.0,
+        "gs_residual": 0.0,
+        "ctc_status": "CLEAR",
+        "ctc_discriminant": 0.0,
+        "ctc_order_parameter": 0.0,
+        "ctc_k0_timelike": false
+      }
+    },
+    "ads_boost_info": {
+      "p_curvature": 0.11881801361715416,
+      "p_effective": 0.1358935819021556,
+      "R_norm": 1.264911064067352,
+      "alpha": 0.1,
+      "g00": -1.0,
+      "gamma_gravitational": 1.0,
+      "gamma_boost": 1.1547005383792517,
+      "gamma_total": 1.1547005383792517,
+      "observer_velocity": 0.5
+    },
+    "schwarz_rest_info": {
+      "p_curvature": 0.0001414113567086428,
+      "p_effective": 0.00024491897672751506,
+      "R_norm": 0.001414213562373095,
+      "alpha": 0.1,
+      "g00": -0.3333333333333333,
+      "gamma_gravitational": 1.7320508075688774,
+      "gamma_boost": 1.0,
+      "gamma_total": 1.7320508075688774,
+      "observer_velocity": 0.0
+    },
+    "kd_flat": {
+      "kd_value": -0.1234429932877238,
+      "is_negative": true,
+      "contextuality_proxy": true,
+      "convergence": {
+        "converged": false,
+        "final_step": 50,
+        "total_steps": 50
+      },
+      "angles": {
+        "basis_a": {
+          "theta": 4.266159442749881,
+          "phi": 5.842191807349103
+        },
+        "basis_b": {
+          "theta": 2.173582915487132,
+          "phi": 5.934443362633807
+        }
+      },
+      "target_state_index": "rho_0"
+    },
+    "kd_desitter": {
+      "kd_value": -0.011973396998374426,
+      "is_negative": true,
+      "contextuality_proxy": true,
+      "convergence": {
+        "converged": false,
+        "final_step": 50,
+        "total_steps": 50
+      },
+      "angles": {
+        "basis_a": {
+          "theta": 3.469867482883571,
+          "phi": 5.812715976644555
+        },
+        "basis_b": {
+          "theta": 0.7162079449414319,
+          "phi": 5.963919193338355
+        }
+      },
+      "target_state_index": "rho_0"
+    },
+    "kd_delta": {
+      "value": 0.11146959628934938,
+      "kd_flat": -0.1234429932877238,
+      "kd_desitter": -0.011973396998374426,
+      "flat_converged": false,
+      "desitter_converged": false,
+      "interpretation": "Relative KD signal (de Sitter minus flat) under the implemented model. Not a standalone proof of curvature-induced contextuality; optimizer convergence status is reported separately."
+    },
+    "dqe_note": "Optional differentiable governance engine (flame_torch) not installed.",
+    "dqe_runtime": {
+      "backend_name": "unavailable",
+      "backend_available": false,
+      "dependency_declared": false,
+      "evidence_class": "optional_engine_check"
+    },
+    "memory_kernel": {
+      "nm_measure": 0.0014132140336108878,
+      "depth": 1,
+      "profile": [
+        0.0,
+        0.0014132140336108878
+      ],
+      "threshold_used": 1e-06,
+      "source": "synthetic_injected_backflow",
+      "interpretation": "Detector self-test: an artificial coherence backflow is injected to confirm the TTM registers nm > 0. Validates the detector only; not evidence that the model exhibits non-Markovian physics."
+    },
+    "memory_kernel_model_trajectory": {
+      "nm_measure": 0.0,
+      "depth": 0,
+      "profile": [
+        0.0,
+        0.0
+      ],
+      "threshold_used": 1e-06,
+      "source": "model_generated_trajectory",
+      "interpretation": "The phenomenological channel map is Markovian by construction; the model's own trajectory exhibits no non-Markovian backflow (nm ~ 0)."
+    },
+    "accessibility_scores": {
+      "score_pass": {
+        "final_access_score": 1.0,
+        "gate_pass": true,
+        "base_score": 1.0,
+        "markov_penalty": 0.0,
+        "kd_penalty": 0.0,
+        "risk_penalty": 0.0,
+        "markov_hint": "likely_markovian",
+        "kd_signal": 0.0
+      },
+      "score_fail": {
+        "final_access_score": 0.0,
+        "gate_pass": false,
+        "base_score": 0.0,
+        "markov_penalty": 0.0,
+        "kd_penalty": 0.0,
+        "risk_penalty": 0.0,
+        "markov_hint": "blocked",
+        "kd_signal": 0.0
+      },
+      "score_nm": {
+        "final_access_score": 0.95,
+        "gate_pass": true,
+        "base_score": 1.0,
+        "markov_penalty": 0.05,
+        "kd_penalty": 0.0,
+        "risk_penalty": 0.0,
+        "markov_hint": "non_markovian",
+        "kd_signal": 0.0
+      },
+      "score_kd": {
+        "final_access_score": 0.9,
+        "gate_pass": true,
+        "base_score": 1.0,
+        "markov_penalty": 0.0,
+        "kd_penalty": 0.1,
+        "risk_penalty": 0.0,
+        "markov_hint": "likely_markovian",
+        "kd_signal": 0.01
+      }
+    },
+    "rust_verify_stdout": "Rust verification finished with verdict: PASS\n",
+    "rust_turbovec_result": {
+      "verdict": "PASS",
+      "turbovec_scores": [
+        0.15920852,
+        0.131884,
+        0.13167885,
+        0.072431274,
+        0.07162834,
+        0.070654295,
+        -0.0805752,
+        -0.117812134,
+        -0.12495007,
+        -0.17778
+      ],
+      "turbovec_indices": [
+        1,
+        8,
+        2,
+        3,
+        7,
+        9,
+        0,
+        5,
+        6,
+        4
+      ],
+      "max_error": 0.023588568,
+      "checks": {
+        "turbovec_ingested_correct_count": true,
+        "turbovec_quantization_error_within_bounds": true,
+        "turbovec_returned_all_results": true
+      }
+    },
+    "scientific_audit_reviews": {
+      "flat": {
+        "verdict": "ACCEPT",
+        "expected_verdict": "ACCEPT",
+        "raw_score": 98.0,
+        "normalized_score": 0.98,
+        "raw_score_scale": "percentage",
+        "claim_drift_raw": 2.0,
+        "claim_drift_normalized": 0.02,
+        "claim_drift_scale": "percentage",
+        "coverage_rate": 0.5625,
+        "evidence_class": "external_review_signal",
+        "backend_mode": "external"
+      },
+      "ads5": {
+        "verdict": "MINOR_REVISION",
+        "expected_verdict": "ACCEPT_OR_MINOR_REVISION",
+        "raw_score": 83.0,
+        "normalized_score": 0.83,
+        "raw_score_scale": "percentage",
+        "claim_drift_raw": 17.0,
+        "claim_drift_normalized": 0.17,
+        "claim_drift_scale": "percentage",
+        "coverage_rate": 0.5,
+        "evidence_class": "external_review_signal",
+        "backend_mode": "external"
+      },
+      "schwarzschild": {
+        "verdict": "ACCEPT",
+        "expected_verdict": "ACCEPT",
+        "raw_score": 98.0,
+        "normalized_score": 0.98,
+        "raw_score_scale": "percentage",
+        "claim_drift_raw": 2.0,
+        "claim_drift_normalized": 0.02,
+        "claim_drift_scale": "percentage",
+        "coverage_rate": 0.5,
+        "evidence_class": "external_review_signal",
+        "backend_mode": "external"
+      },
+      "de_sitter": {
+        "verdict": "MINOR_REVISION",
+        "expected_verdict": "MINOR_REVISION",
+        "raw_score": 83.0,
+        "normalized_score": 0.83,
+        "raw_score_scale": "percentage",
+        "claim_drift_raw": 17.0,
+        "claim_drift_normalized": 0.17,
+        "claim_drift_scale": "percentage",
+        "coverage_rate": 0.4375,
+        "evidence_class": "external_review_signal",
+        "backend_mode": "external"
+      },
+      "eguchi_hanson": {
+        "verdict": "MINOR_REVISION",
+        "expected_verdict": "MINOR_REVISION",
+        "raw_score": 98.0,
+        "normalized_score": 0.98,
+        "raw_score_scale": "percentage",
+        "claim_drift_raw": 2.0,
+        "claim_drift_normalized": 0.02,
+        "claim_drift_scale": "percentage",
+        "coverage_rate": 0.375,
+        "evidence_class": "external_review_signal",
+        "backend_mode": "external"
+      },
+      "godel_universe": {
+        "verdict": "MINOR_REVISION",
+        "expected_verdict": "MINOR_REVISION",
+        "raw_score": 83.0,
+        "normalized_score": 0.83,
+        "raw_score_scale": "percentage",
+        "claim_drift_raw": 17.0,
+        "claim_drift_normalized": 0.17,
+        "claim_drift_scale": "percentage",
+        "coverage_rate": 0.375,
+        "evidence_class": "external_review_signal",
+        "backend_mode": "external"
+      }
+    }
+  }
+}

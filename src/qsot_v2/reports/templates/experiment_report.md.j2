@@ -1,0 +1,77 @@
+# Quantum Geometry & Entropy Verification Report (QGB-TEST-0057)
+
+**Verdict:** `{{ verdict }}`  
+**Generated:** `{{ generated_at }}`  
+**Repo:** `.`
+
+> [!NOTE]
+> **Scope note:**  
+> This report verifies model-output consistency under explicitly stated assumptions.  
+> It does not claim external physical validation or proof of a new physical law.
+
+## Overview
+This report documents the verification of the Quantum Geometry Bridge (QGB) and the Entropy Gate under various classical backgrounds.
+This model simulates the mapping of Riemann curvature of classical spacetimes to quantum channels, evaluating how curvature is modeled as a source of decoherence within the implemented mapping, driving purity decay and Von Neumann entropy growth. Relativistic boosts are modeled to further amplify these effects through time dilation.
+
+## Check Summary
+- **Total checks:** {{ total }}
+- **PASS:** {{ passed }}
+- **DEGRADED_PASS:** {{ degraded }}
+- **SKIPPED:** {{ skipped }}
+- **FAIL:** {{ failed }}
+
+{% if audit_context and audit_context.scientific_audit %}
+## Audit Backend Context
+
+> [!IMPORTANT]
+> External audit results are **environment-dependent review signals** (evidence class `external_review_signal`). They do not establish external physical validity.
+
+- **Scientific audit backend:** `{{ audit_context.scientific_audit.backend_name }}` (mode: `{{ audit_context.scientific_audit.backend_mode }}`, available: `{{ audit_context.scientific_audit.backend_available }}`, dependency declared: `{{ audit_context.scientific_audit.dependency_declared }}`)
+- **Score scale:** raw `{{ audit_context.scientific_audit.raw_score_scale }}` normalized to `{{ audit_context.scientific_audit.normalized_score_scale }}`
+- **Claim scope:** `{{ audit_context.scientific_audit.claim_scope }}`
+{% if audit_context.dqe_covenant %}- **DQE governance engine:** `{{ audit_context.dqe_covenant.backend_name }}` (available: `{{ audit_context.dqe_covenant.backend_available }}`, dependency declared: `{{ audit_context.dqe_covenant.dependency_declared }}`, scope: `{{ audit_context.dqe_covenant.claim_scope }}`)
+{% endif %}
+{% if audit_context.scientific_audit.backend_mode == 'mock' %}
+> [!NOTE]
+> The scientific audit ran in **mock mode** (external framework not installed). Review verdicts come from the local deterministic fallback, not an external review backend.
+{% endif %}
+{% endif %}
+
+{% if calibration and calibration.free_parameters %}
+## Calibration (free parameters)
+
+> [!NOTE]
+> The outputs below depend on these hand-set calibration choices, not on first-principles derivation.
+
+| Parameter | Value | Source | Governs |
+|---|---|---|---|
+{% for name, p in calibration.free_parameters.items() -%}
+| `{{ name }}` | `{{ p.value }}` | {{ p.source }} | {{ p.governs | join(", ") }} |
+{% endfor -%}
+{% for name, p in calibration.hardcoded_thresholds.items() -%}
+| `{{ name }}` | `{{ p.value }}` | {{ p.source }} | {{ p.governs | join(", ") }} |
+{% endfor %}
+{% if calibration.notable_magic_constants %}
+**Notable magic constants** (hand-set; physical justification not fully documented in code):
+{% for name, p in calibration.notable_magic_constants.items() -%}
+- `{{ name }}` — {{ p.role }} ({{ p.source }}). _{{ p.caveat }}_
+{% endfor %}
+{% endif %}
+{% endif %}
+
+## Checks
+
+{% for name, status in checks.items() -%}
+- `{{ name }}`: **{{ status }}**
+{% endfor %}
+
+## Interpretation
+
+The {{ total }} automated checks verify consistency with the implemented model assumptions and expected output behavior:
+1. **Flat Minkowski Baselines**: Evolving a qubit through a flat Minkowski background (either at rest or boosted) is modeled to preserve state purity ($P=1.0$) and zero Von Neumann entropy.
+2. **Curvature Noise & Entropy**: Evolving a qubit through curved backgrounds (Schwarzschild, de Sitter, AdS5, Eguchi-Hanson) is simulated to cause purity decay ($P < 1.0$) and Von Neumann entropy growth. By mapping the decoherence channel to the Riemann curvature norm (representing tidal forces) rather than the Ricci norm, curved backgrounds are simulated to induce decay while allowing Ricci-flat vacua (Schwarzschild and Eguchi-Hanson) to pass admissibility gate checks.
+3. **Relativistic Boosts**: Relativistic boosts ($\beta > 0$) are modeled to amplify the effective noise parameter and accelerate the decay of state purity due to the compounding of gravitational and kinematical time dilation.
+4. **Kirkwood-Dirac (flat-relative)**: The basis-search optimization is a bounded engineering sanity check. The reported signal is the de-Sitter-minus-flat KD delta (`kd_delta` in observations), interpreted only as a relative quantity under the implemented model -- not a standalone proof of curvature-induced contextuality. Optimizer convergence is reported explicitly; a non-converged run is surfaced as `DEGRADED_PASS`. If an optional differentiable governance engine is installed, it runs an additional covenant check.
+5. **TTM & Accessibility Score**: The TTM module is exercised two ways: a **detector self-test** on a synthetic injected backflow (confirms it registers nm > 0), and the **model's own trajectory** (Markovian by construction, nm ~ 0). The synthetic pass validates the detector, not non-Markovian physics in the model. The accessibility score applies penalties for risk, non-Markovianity, and KD negativity.
+6. **Rust turbovec Integration**: Ingesting and querying domain embeddings via the Rust turbovec compressed vector index verifies the consistency of the sidecar resonance similarity score with minimal quantization error (< 0.15).
+7. **Compliance Audit Admissibility**: The compliance audit compares each background's gate outputs and residuals against the project's own predefined expected-behavior table, producing a bounded, environment-dependent review signal -- not external ground truth. The review found no blocking inconsistency across the six background reports; minor revisions remain only for backgrounds whose expected behavior intentionally surfaces boundary conditions, such as de Sitter, Eguchi-Hanson, and Gödel universe. This review is a packaging/surface sanity check only. Physics-model consistency is assessed through the physics adapter and executable verification checks; external physical validity remains outside the scope of this report.

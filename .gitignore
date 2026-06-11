@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.coverage
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# Rust sidecar build artifacts
+src/qsot_v2/rust_sidecar/target/
+
+# Runtime temp artifacts
+temp.yaml
+temp_kd_run/
+test_vectors.json
+
+# Confidential / internal (not for publication)
+docs/stage_a_masterplan.md
+
+# Research paper draft — excluded from initial release pending separate audit
+paper/
+.github/workflows/paper.yml

@@ -1,0 +1,210 @@
+"""Unit tests for physics simulator modules."""
+from __future__ import annotations
+
+import numpy as np
+import pytest
+
+from qsot_v2.physics import (
+    BackgroundField,
+    BetaResidualVerifier,
+    KrausChannel,
+    MetricToChannelMap,
+    QuantumCircuit,
+    QuantumState,
+    run_background_verify,
+)
+
+
+def test_quantum_state():
+    state = QuantumState.ground()
+    assert state.purity == 1.0
+    assert state.coherence == 0.0
+    assert state.is_pure()
+    assert state.von_neumann_entropy == 0.0
+    assert np.allclose(state.bloch_vector, [0.0, 0.0, 1.0])
+
+    excited = QuantumState.excited()
+    assert excited.purity == 1.0
+    assert excited.coherence == 0.0
+    assert excited.von_neumann_entropy == 0.0
+    assert np.allclose(excited.bloch_vector, [0.0, 0.0, -1.0])
+
+    mixed = QuantumState.maximally_mixed()
+    assert mixed.purity == 0.5
+    assert mixed.coherence == 0.0
+    assert abs(mixed.von_neumann_entropy - np.log(2.0)) < 1e-12
+
+    superpos = QuantumState.from_bloch(np.pi / 2, 0.0)
+    assert superpos.purity == pytest.approx(1.0)
+    assert abs(superpos.coherence - 0.5) < 1e-12
+    assert superpos.von_neumann_entropy < 1e-12
+    assert np.allclose(superpos.bloch_vector, [1.0, 0.0, 0.0], atol=1e-7)
+
+    with pytest.raises(ValueError):
+        QuantumState(np.zeros((3, 3)))
+
+def test_kraus_channel(flat_background):
+    mapper = MetricToChannelMap(sensitivity=0.1)
+    ch = mapper.to_channel(flat_background)
+    assert ch.completeness_error < 1e-12
+    assert ch.dim == 2
+
+    # Identity channel
+    ch_id = KrausChannel.identity()
+    assert ch_id.completeness_error < 1e-12
+    rho = QuantumState.ground().rho
+    assert np.allclose(ch_id.apply(rho), rho)
+
+def test_metric_to_channel_map():
+    # Depolarizing sensitivity check
+    with pytest.raises(ValueError):
+        MetricToChannelMap(sensitivity=0.0)
+    with pytest.raises(ValueError):
+        MetricToChannelMap(channel_type="invalid")
+
+    mapper_depol = MetricToChannelMap(sensitivity=0.1, channel_type="depolarizing")
+    mapper_deph = MetricToChannelMap(sensitivity=0.1, channel_type="dephasing")
+
+    # Schwarzschild background
+    sch = BackgroundField(name="schwarz", G=np.diag([-1.0, 1.0]), ricci_matrix=np.eye(2)*0.1)
+    ch_depol = mapper_depol.to_channel(sch)
+    ch_deph = mapper_deph.to_channel(sch)
+    assert ch_depol.channel_type == "depolarizing"
+    assert ch_deph.channel_type == "dephasing"
+    assert ch_depol.p > 0.0
+    assert ch_deph.p > 0.0
+
+def test_gravitational_decoherence():
+    mapper = MetricToChannelMap(sensitivity=0.1)
+    bg = BackgroundField(name="test", G=np.diag([-0.5, 1.0]), ricci_matrix=np.eye(2)*0.1)
+    
+    # Rest frame
+    res_rest = mapper.gravitational_decoherence(bg, observer_velocity=0.0)
+    assert res_rest["gamma_gravitational"] == pytest.approx(np.sqrt(2.0))
+    assert res_rest["gamma_boost"] == 1.0
+    assert res_rest["gamma_total"] == pytest.approx(np.sqrt(2.0))
+
+    # Boosted frame
+    res_boost = mapper.gravitational_decoherence(bg, observer_velocity=0.5)
+    assert res_boost["gamma_boost"] == pytest.approx(1.0 / np.sqrt(0.75))
+    assert res_boost["gamma_total"] > res_rest["gamma_total"]
+    assert res_boost["p_effective"] > res_rest["p_effective"]
+
+    with pytest.raises(ValueError):
+        mapper.gravitational_decoherence(bg, observer_velocity=-0.1)
+    with pytest.raises(ValueError):
+        mapper.gravitational_decoherence(bg, observer_velocity=1.0)
+
+def test_quantum_circuit(flat_background):
+    circuit = QuantumCircuit()
+    assert circuit.state.is_pure()
+    assert len(circuit.history) == 1
+
+    # Apply channel
+    mapper = MetricToChannelMap(sensitivity=0.1)
+    ch = mapper.to_channel(flat_background)
+    circuit.apply_channel(ch)
+    assert len(circuit.history) == 2
+
+    # Reset
+    circuit.reset()
+    assert len(circuit.history) == 1
+
+    # Unitary
+    U = np.array([[0, 1], [1, 0]], dtype=complex)
+    circuit.apply_unitary(U)
+    assert np.allclose(circuit.state.rho, QuantumState.excited().rho)
+    assert len(circuit.purity_history()) == 2
+    assert len(circuit.coherence_history()) == 2
+
+def test_run_background_verify():
+    flat = run_background_verify("flat")[0]
+    assert flat["gate"] == "PASS"
+    assert flat["physics"]["ricci_norm"] == 0.0
+
+    sch = run_background_verify("schwarzschild")[0]
+    assert sch["gate"] == "PASS"
+
+    ds = run_background_verify("de_sitter")[0]
+    assert ds["gate"] == "FAIL"
+
+    ads = run_background_verify("ads5")[0]
+    assert ads["gate"] == "PASS"
+
+    eh = run_background_verify("eguchi_hanson")[0]
+    assert eh["gate"] == "FAIL"
+    assert eh["physics"]["gs_anomaly_flag"] is True
+
+    godel = run_background_verify("godel_universe")[0]
+    assert godel["gate"] == "FAIL"
+    assert godel["physics"]["ctc_status"] == "DETECTED"
+
+    with pytest.raises(ValueError):
+        run_background_verify("invalid_preset")
+
+def test_beta_residual_verifier(flat_background):
+    verifier = BetaResidualVerifier()
+    # Explicitly make sure flat_background is classified correctly
+    flat_background.is_symbolic_ricci_flat = True
+    flat_background.is_conformal_background = True
+    res_flat = verifier.verify(flat_background)
+    assert res_flat.all_pass
+    assert res_flat.status == "pass"
+
+    sch_bg = BackgroundField(
+        name="schwarzschild",
+        G=np.diag([-1.0, 1.0]),
+        ricci_matrix=np.eye(2)*0.1,
+        is_symbolic_ricci_flat=False,
+    )
+    res_sch = verifier.verify(sch_bg)
+    assert not res_sch.all_pass
+    assert res_sch.status == "fail"
+
+    eh_bg = BackgroundField(
+        name="eguchi_hanson",
+        G=np.diag([-1.0, 1.0]),
+        ricci_matrix=np.eye(2)*0.1,
+        gs_anomaly_flag=True,
+        gs_anomaly_reason="topological_anomaly_proxy",
+    )
+    res_eh = verifier.verify(eh_bg)
+    assert res_eh.gs_anomaly_flag is True
+
+def test_classification_coverage():
+    from qsot_v2.physics.classification import classify_background, compute_admissibility
+    
+    # 1. Custom mock background with ricci_matrix but without ricci_norm
+    class MockBgWithMatrix:
+        ricci_matrix = np.eye(2) * 0.5
+        cosmological_constant = 0.5
+        is_conformal_background = False
+        has_ctc = False
+        gs_anomaly_flag = False
+        D = 10
+        G = np.diag([-1.0, 1.0])
+    
+    cls1 = classify_background(MockBgWithMatrix())
+    assert cls1["ricci_norm"] > 0.0
+    
+    # 2. Custom mock background without ricci_matrix and without ricci_norm
+    class MockBgEmpty:
+        D = 4
+        G = np.diag([-1.0, 1.0])
+        
+    cls2 = classify_background(MockBgEmpty())
+    assert cls2["ricci_norm"] == 0.0
+
+    # 3. Verify non-zero beta residual admissibility branch (score = 0.2)
+    class MockNonVacuumBg:
+        ricci_norm = 1.5
+        D = 10
+        G = np.diag([-1.0, 1.0])
+        is_conformal_background = False
+        has_ctc = False
+        gs_anomaly_flag = False
+        
+    adm = compute_admissibility(MockNonVacuumBg())
+    assert adm["admissibility"] == 0.2
+    assert adm["reason"] == "nonzero_beta_residual"
+
