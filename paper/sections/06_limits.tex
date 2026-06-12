@@ -1,0 +1,32 @@
+% Section 6: Limits and explicit non-claims
+
+To maintain scientific integrity and prevent overclaiming, this section documents the explicit limits and boundaries of the \texttt{QSOT-Harness} verification artifact.
+
+\subsection{Phenomenological approximation, not fundamental QG}
+The curvature-to-channel mapping:
+$$p = 1 - e^{-\alpha \|R^\lambda{}_{\mu\nu\rho}\|_F}$$
+is a phenomenological model. It is \emph{not} a first-principles derivation from loop quantum gravity, string theory, or semiclassical gravity path integrals. The framework simulates the consequences of such a mapping, but does not prove the mapping's physical reality.
+
+\subsection{Sensitivity as a free calibration parameter}
+The parameter $\alpha$ (sensitivity) is a free calibration parameter. It is not derived from fundamental constants (such as Newton's constant $G$ or Planck's constant $\hbar$). The value $\alpha = 0.1$ used in the default configuration is chosen for numerical stability during demonstration and testing.
+
+\subsection{Resolution of the Schwarzschild Ricci-flatness}
+Theoretically, both Schwarzschild and Eguchi-Hanson spacetimes are Ricci-flat GR solutions, meaning their Ricci tensor is zero, $R_{\mu\nu} = 0$. In earlier versions, this introduced a logical contradiction where artificial Ricci residuals had to be injected to force decay, conflicting with the Phase 7 audit. 
+
+This contradiction has been resolved in the code by separating Ricci curvature (representing energy-momentum sources used for gate admissibility checks) and Riemann curvature (representing tidal gravitational forces used for the decoherence mapping). Schwarzschild and Eguchi-Hanson now correctly have zero Ricci norms (passing the gate checks and beta verifier) but non-zero Riemann norms, inducing consistent physical decoherence.
+
+\subsection{KD negativity as a bounded, flat-relative sanity check}
+The Kirkwood-Dirac basis search
+$$\min_{\theta_a, \phi_a, \theta_b, \phi_b} \text{Re}\left(\text{Tr}[P_b P_a \rho]\right)$$
+is a bounded numerical sanity check, not a proof of non-classicality. Single-qubit KD negativity is generic and appears even in the flat baseline, so raw negativity is not curvature-specific. The harness therefore reports only the flat-relative difference $\Delta_{\text{KD}} = Q^{\text{de Sitter}}_{\text{KD}} - Q^{\text{flat}}_{\text{KD}}$ as a comparative signal under the implemented model, and labels the optimizer's (non-)convergence explicitly. It does \emph{not} prove that spacetime is quantized, does \emph{not} reconstruct a multi-time process matrix, and is \emph{not} a contextuality witness for any external system.
+
+\subsection{TTM memory kernel proxy limits}
+The Transfer Tensor Method calculation uses a discrete trace-distance-based proxy:
+$$\text{nm\_measure} = \sum_{n=1}^N \|\rho_{\text{actual}}(t_n) - \mathcal{E}(\rho(t_{n-1}))\|_{\text{tr}}$$
+to quantify the deviation from Markovian evolution. A true non-Markovian characterization requires full process tomography to build the Choi-Jamio{\l}kowski state of the channel, which is outside the scope of a single-qubit sequential simulation. Moreover, the non-zero $\text{nm\_measure}$ reported by the harness originates from a synthetic injected-backflow \emph{self-test}; the model's own trajectory is Markovian by construction ($\text{nm\_measure} = 0$), so a detector pass is not a claim of non-Markovian physics in the model.
+
+\subsection{Compliance audit boundaries}
+The scientific compliance audit is a bounded, environment-dependent review signal that checks whether the simulation outputs match the project's own predefined expected-behavior table --- not external ground truth. Its gate and verdict labels are policy-derived classifications, not physical observables, and it does not perform formal verification of the general-relativity metric tensors or solve the Einstein field equations.
+
+\subsection{Inspiration reference, not a derivation source}
+The reference \cite{Pikovski2015} is cited only to acknowledge the established physical idea that gravitational time dilation and spacetime curvature induce decoherence in localized quantum systems. This software is an independent phenomenological construct and does not reproduce any specific formula, theorem, or numerical result from that work; in particular, the Riemann-norm-to-Kraus mapping of eq.~\eqref{eq:curvature_prob} is our own software ansatz and is not derived from it.

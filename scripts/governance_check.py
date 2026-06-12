@@ -25,7 +25,19 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 SELF = Path(__file__).name
 
-SCAN_SUFFIXES = {".py", ".md", ".toml", ".yaml", ".yml", ".j2", ".rs", ".cff", ".txt"}
+SCAN_SUFFIXES = {
+    ".py",
+    ".md",
+    ".toml",
+    ".yaml",
+    ".yml",
+    ".j2",
+    ".rs",
+    ".cff",
+    ".txt",
+    ".tex",
+    ".bib",
+}
 
 # 1. Local-workspace path / codename leaks (DI-SAN-001 style).
 LEAK_PATTERNS = [

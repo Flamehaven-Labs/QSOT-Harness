@@ -1,0 +1,138 @@
+% main.tex
+% A Bounded, Epistemically Labeled Verification Harness for Phenomenological Quantum-Channel Models of Curved Spacetime
+%
+% Compile:  latexmk -pdf main.tex   (uses biber for the bibliography)
+%
+
+\documentclass[11pt,a4paper]{article}
+
+% --- Packages ---------------------------------------------------------------
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{microtype}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage[backend=biber,style=alphabetic,sorting=nyt]{biblatex}
+
+\addbibresource{references.bib}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=black,
+  citecolor=black,
+  urlcolor=blue!50!black,
+  pdftitle={A Bounded, Epistemically Labeled Verification Harness for Phenomenological Quantum-Channel Models of Curved Spacetime},
+  pdfauthor={Yun Kwansub}
+}
+
+% --- Reproduction/Verification environment ---------------
+\newtheoremstyle{reproduction}%
+  {1.2em}{1.2em}%        % top/bottom spacing
+  {\itshape}{}%          % body / indent
+  {\bfseries}{.}%        % heading / punctuation
+  {.5em}%                % space after head
+  {}                     % default head spec
+\theoremstyle{reproduction}
+\newtheorem{reproduction}{Reproduction}[section]
+\let\verification\reproduction
+\let\endverification\endreproduction
+
+% Macros
+\DeclareUrlCommand{\tname}{\urlstyle{tt}%
+  \def\UrlBreaks{\do\.\do\/\do\_\do\-\do\:\do\(\do\)}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\OK}{\mathcal{O}_K}
+
+% --- Title block ------------------------------------------------------------
+\title{%
+  A Bounded, Epistemically Labeled Verification Harness\\
+  for Phenomenological Quantum-Channel Models\\
+  of Curved Spacetime\\[0.5em]
+  \large Claim-Boundary Enforcement, Evidence-Class Serialization, and Calibration Traceability for a Single-Qubit Curved-Space Ansatz}
+\author{%
+  Yun Kwansub%
+  \thanks{Independent author. Code distribution:
+    \href{https://github.com/Flamehaven-Labs/QSOT-Harness}{github.com/Flamehaven-Labs/QSOT-Harness}.}%
+}
+\date{2026-06-12 \\ \small QSOT-Harness (reference code commit \texttt{26c0680})}
+
+% --- Document --------------------------------------------------------------
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We present \texttt{QSOT-Harness}, an open-source Python package that implements a phenomenological model mapping classical spacetime curvature metrics (specifically the Frobenius norms of the Riemann and Ricci tensors) to single-qubit quantum decoherence channels. We emphasize that this mapping is a conceptual ansatz without a first-principles physical derivation. The project's main focus is mathematical consistency verification of the model's assumptions and regression testing rather than discovering new physics. 
+
+The central contribution is not a physical result but a \emph{verification architecture} that makes the software's epistemic status machine-readable. Five elements are enforced and serialized in the output: (i) a fixed \emph{claim boundary} that disclaims external physical validity and any new-law claim; (ii) an \emph{evidence class} attached to every reported observation (mathematical invariant, phenomenological model output, policy-derived classification, synthetic-harness output, external-review signal, optional-engine check, or runtime-dependency status); (iii) explicit \emph{surfacing of environment-dependent backends}, recording which audit/governance backend ran and whether it was external or a deterministic mock; (iv) a \emph{calibration manifest} that lists every free or hand-set parameter together with what it governs and where its effect is realized; and (v) a strict \emph{separation of detector self-tests from model-generated signals}. These are exercised by an 8-phase pipeline of 50 checks --- temporal-state axioms, flat and curved baselines, relativistic boosts, a flat-relative Kirkwood-Dirac comparison, a Transfer-Tensor non-Markovianity proxy, a Rust vector-search sidecar, and a bounded compliance review --- run over six spacetime backgrounds as a case study. We document the software's exact limitations, including the arbitrary selection of the sensitivity parameter $\alpha$ and the purely engineering-focused nature of the Rust sidecar. The code is fully reproducible and CI-tested with $94.48\%$ coverage (64 passing tests). The end-to-end reference run reports an overall \texttt{DEGRADED\_PASS} verdict for two explicitly documented, non-failure reasons: the Kirkwood-Dirac optimizer does not converge within its fixed step budget, and the optional governance backend is absent in the baseline environment.
+
+\noindent\textbf{Verification.}
+The repository provides a one-command verifier and frozen JSON/Markdown evidence files. The exact execution commands and verification details are provided in \S\ref{sec:repro}.
+\end{abstract}
+
+\clearpage
+\tableofcontents
+\clearpage
+
+% ---------------------------------------------------------------------------
+\section{Background and scope}
+\label{sec:background}
+
+\input{sections/00_theory_intent.tex}
+\input{sections/01_background.tex}
+
+% ---------------------------------------------------------------------------
+\section{Phases 1--3: Flat Minkowski, curvature noise, and relativistic boosts}
+\label{sec:phases_1_3}
+
+\input{sections/02_phases_1_3.tex}
+
+% ---------------------------------------------------------------------------
+\section{Phases 4--5: Kirkwood-Dirac optimization and non-Markovianity}
+\label{sec:phases_4_5}
+
+\input{sections/03_phases_4_5.tex}
+
+% ---------------------------------------------------------------------------
+\section{Phase 6: Rust turbovec sidecar vector search verification}
+\label{sec:phase_6}
+
+\input{sections/04_phase_6.tex}
+
+% ---------------------------------------------------------------------------
+\section{Phase 7: Scientific compliance audit framework}
+\label{sec:scientific_audit}
+
+\input{sections/05_scientific_audit.tex}
+
+% ---------------------------------------------------------------------------
+\section{Limits and explicit non-claims}
+\label{sec:limits}
+
+\input{sections/06_limits.tex}
+
+% ---------------------------------------------------------------------------
+\section{Reproducibility}
+\label{sec:repro}
+
+\input{sections/07_reproducibility.tex}
+
+% ---------------------------------------------------------------------------
+\clearpage
+\section*{Acknowledgements}
+
+\input{sections/08_acknowledgements.tex}
+
+% ---------------------------------------------------------------------------
+\clearpage
+\printbibliography
+
+\end{document}

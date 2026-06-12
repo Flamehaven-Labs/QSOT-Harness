@@ -1,0 +1,55 @@
+name: Paper
+
+on:
+  push:
+    branches: [main, master]
+    tags:
+      - 'v*'
+    paths:
+      - 'paper/**'
+      - '.github/workflows/paper.yml'
+  pull_request:
+    paths:
+      - 'paper/**'
+  workflow_dispatch:
+
+env:
+  # Force even transitively-pinned JS actions onto Node 24 ahead of the
+  # 2026-06-16 forced cutover (operational hygiene; no build semantics).
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  build:
+    name: Compile paper
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Honesty scan (overclaim check)
+        run: |
+          set -e
+          cd paper
+          if grep -nE "we prove[^d ]|we have proved|we proof" sections/*.tex main.tex; then
+            echo "ERROR: 'we prove' language detected"; exit 1
+          fi
+          if grep -niE "revolutionary|unprecedented|state-of-the-art" sections/*.tex main.tex; then
+            echo "ERROR: banned buzzword detected"; exit 1
+          fi
+          echo "Honesty scan: PASS"
+
+      - name: Compile with latexmk
+        uses: xu-cheng/latex-action@v3
+        with:
+          root_file: main.tex
+          working_directory: paper
+
+      - name: Validate compiled PDF
+        run: |
+          test -s paper/main.pdf
+          file paper/main.pdf
+
+      - name: Upload PDF artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: quantum-geometry-entropy-verification-paper
+          path: paper/main.pdf

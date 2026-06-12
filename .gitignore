@@ -25,7 +25,3 @@ test_vectors.json
 
 # Confidential / internal (not for publication)
 docs/stage_a_masterplan.md
-
-# Research paper draft — excluded from initial release pending separate audit
-paper/
-.github/workflows/paper.yml

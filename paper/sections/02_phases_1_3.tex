@@ -1,0 +1,49 @@
+% Section 2: Phases 1-3: Flat Minkowski, Curvature Noise, and Relativistic Boosts
+
+This section describes the mathematical formulations and verification steps for the first three phases of the execution engine.
+
+\subsection{Phase 1: Flat Minkowski baselines}
+Phase 1 establishes the baseline for a 2-level quantum system (qubit) evolving through flat Minkowski spacetime. The density matrix is initialized in a pure state $\rho_0$. The flat metric is defined by $G = \text{diag}(-1, 1, \dots, 1)$, and the Ricci curvature tensor is identically zero, $R_{\mu\nu} = 0$. 
+
+The CPTP channel is the identity map $\mathcal{E}_{\text{flat}}(\rho) = \rho$. The phase executes five regression tests to ensure that the code correctly computes:
+\begin{enumerate}
+  \item \tname{flat_rest_purity_is_1}: Verifies that the purity $P(\rho) = \text{Tr}(\rho^2)$ remains exactly $1.0$.
+  \item \tname{flat_rest_entropy_is_0}: Verifies that the Von Neumann entropy $S(\rho) = -\text{Tr}(\rho \ln \rho)$ remains exactly $0.0$.
+  \item \tname{flat_gate_passes}: Confirms that the background verification gate accepts flat Minkowski as a baseline.
+  \item \tname{flat_ctc_is_clear}: Confirms the absence of closed timelike curves.
+  \item \tname{flat_boost_purity_is_1}: Confirms that moving the observer through flat Minkowski at relativistic speed does not introduce spurious decoherence.
+\end{enumerate}
+
+\subsection{Phase 2: Curvature-induced decoherence and the Riemann-Ricci distinction}
+Phase 2 implements the curved-space phenomenological mapping. Rather than mapping the Ricci curvature tensor directly to decoherence (which would physically contradict Ricci-flat solutions like Schwarzschild), the model distinguishes between Ricci curvature (representing energy-momentum sources evaluated for gate checks) and Riemann curvature (representing tidal gravitational forces evaluated for decoherence). The Frobenius norm of the Riemann tensor $\|R^\lambda{}_{\mu\nu\rho}\|_F$ is mapped to a decoherence probability $p$:
+\begin{equation}
+  p = 1 - e^{-\alpha \|R^\lambda{}_{\mu\nu\rho}\|_F},
+  \label{eq:curvature_prob}
+\end{equation}
+where $\alpha \in (0, 100]$ is a free sensitivity parameter. The probability $p$ is used to build the Kraus operators $\{K_i\}$ of a CPTP channel. For a depolarizing channel, these are:
+\begin{equation}
+  K_0 = \sqrt{1-p}\,\mathbb{I}, \quad K_1 = \sqrt{\frac{p}{3}}\,X, \quad K_2 = \sqrt{\frac{p}{3}}\,Y, \quad K_3 = \sqrt{\frac{p}{3}}\,Z.
+\end{equation}
+The density matrix evolves according to:
+\begin{equation}
+  \rho_{n+1} = \sum_i K_i \rho_n K_i^\dagger = (1-p)\rho_n + \frac{p}{3}\sum_{j=1}^3 \sigma_j \rho_n \sigma_j.
+\end{equation}
+
+\subsubsection{Resolution of Ricci-flat vacuum states}
+Theoretically, both Schwarzschild and Eguchi-Hanson spacetimes are Ricci-flat vacuum solutions ($R_{\mu\nu} = 0$), which means they satisfy the classical Einstein field equations in vacuum (gate PASS). However, they possess non-zero Riemann curvature tensors representing non-vanishing tidal gravitational fields. 
+
+By mapping the decoherence channel to the Riemann norm ($\|R\| \approx 10^{-3}$) rather than the Ricci norm, the package successfully simulates purity decay and entropy growth under Schwarzschild and Eguchi-Hanson spacetimes, while maintaining their correct gate status as Ricci-flat vacuums. This eliminates the previous logical contradiction where artificial Ricci residuals had to be injected to force decay.
+
+\subsection{Phase 3: Relativistic boosts and time dilation}
+Phase 3 incorporates observer kinematics and gravity-induced time dilation. When a qubit is observed by a boosted reference frame moving at velocity $v = \beta c$ relative to the metric source, or is situated in a gravitational potential $g_{00}$, the effective time dilation factor is:
+\begin{equation}
+  \gamma_{\text{total}} = \gamma_{\text{grav}} \cdot \gamma_{\text{boost}} = \frac{1}{\sqrt{-g_{00}}} \cdot \frac{1}{\sqrt{1 - \beta^2}}.
+\end{equation}
+
+The time dilation amplifies the effective decoherence probability $p_{\text{eff}}$ experienced by the quantum state over a unit coordinate step:
+\begin{equation}
+  p_{\text{eff}} = 1 - (1 - p)^{\gamma_{\text{total}}}.
+  \label{eq:boosted_prob}
+\end{equation}
+
+The verifier executes checks to validate that the code behaves consistently with eq.~\eqref{eq:boosted_prob}, verifying that purity decays faster under a non-zero boost ($P_{\text{boosted}}(\rho_n) < P_{\text{rest}}(\rho_n)$) and that the math simplifies correctly.

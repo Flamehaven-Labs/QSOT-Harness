@@ -1,0 +1,71 @@
+% Section 7: Reproducibility
+
+This section provides the complete execution surface to reproduce all numerical findings and test results reported in this paper.
+
+\subsection{Environment setup}
+To isolate dependencies, all commands must be executed within the project's activated Python virtual environment:
+\begin{verbatim}
+  # Windows PowerShell
+  .\venv\Scripts\Activate.ps1
+\end{verbatim}
+Install the package in editable mode with development and PyTorch dependencies:
+\begin{verbatim}
+  pip install -e .[dev,torch]
+\end{verbatim}
+
+\subsection{Compiling the Rust sidecar}
+The Rust sidecar binary must be compiled before executing the tests or the main experiment:
+\begin{verbatim}
+  cd src/qsot_v2/rust_sidecar
+  cargo build --release
+  cd ../../..
+\end{verbatim}
+This produces the compiled executable \tname{rust_verify} at \tname{src/qsot_v2/rust_sidecar/target/release/rust_verify.exe} (on Windows).
+
+\subsection{Executing the test suite}
+The test suite consists of 64 unit and integration tests under \tname{tests/}. Run pytest with coverage:
+\begin{verbatim}
+  python -m pytest --cov=qsot_v2 --cov-report=term-missing
+\end{verbatim}
+The expected output is:
+\begin{verbatim}
+  ======================== 64 passed, 1 warning in 12.03s ========================
+  TOTAL                                      1432     79    94%
+  Required test coverage of 90% reached. Total coverage: 94.48%
+\end{verbatim}
+These 64 passing tests represent software regression coverage, verifying code execution paths rather than proving physical principles.
+
+\subsection{Executing the end-to-end experiment}
+To run the full 8-phase experiment, execute the main entrypoint script:
+\begin{verbatim}
+  python run_experiment.py --config configs/experiment.yaml
+\end{verbatim}
+This runs the simulation over all six backgrounds, executes the Rust sidecar, and runs the compliance audit. The expected console summary is:
+\begin{verbatim}
+  [1/8] Phase 0: Temporal Axioms ... PASS (PASS: 5/5)
+  [2/8] Phase 1: Flat Baselines ... PASS (PASS: 5/5)
+  [3/8] Phase 2: Curvature Noise ... PASS (PASS: 15/15)
+  [4/8] Phase 3: Boosts ... PASS (PASS: 5/5)
+  [5/8] Phase 4: Kd Governance ... DEGRADED_PASS (PASS: 3/5)
+  [6/8] Phase 5: Ttm Accessibility ... PASS (PASS: 5/5)
+  [7/8] Phase 6: Rust Turbovec ... PASS (PASS: 4/4)
+  [8/8] Phase 7: Scientific Audit ... PASS (PASS: 6/6)
+  ----------------------------------------------------------------------
+  ✓ Overall Verdict: DEGRADED_PASS
+    Passed: 48 / Failed: 0 / Skipped: 1 / Degraded: 1
+\end{verbatim}
+
+The overall \texttt{DEGRADED\_PASS} verdict arises from two explicitly documented, non-failure conditions rather than any error:
+\begin{enumerate}
+  \item \tname{kd_optimization_converged} is \texttt{DEGRADED\_PASS}: the Kirkwood-Dirac basis search does not converge within its fixed 50-step budget (\S\ref{sec:phases_4_5}), so the comparative signal is reported as a non-converged proxy and the check is degraded rather than passed.
+  \item \tname{dqe_covenant_validated} is \texttt{SKIPPED}: the optional package \tname{flame_torch} is not installed in the baseline environment.
+\end{enumerate}
+Both represent expected software/configuration states (a non-converged numerical search and an absent optional backend), not a physical degradation. The reference run therefore reports \texttt{Passed: 48 / Failed: 0 / Skipped: 1 / Degraded: 1}.
+
+\subsection{Output reports}
+The execution generates two files in the output directory (default: \tname{reports/}):
+\begin{itemize}[leftmargin=*]
+  \item \tname{result.json}: Standardized JSON output containing the exact checks dict, compliance status mapping, and numerical observations.
+  \item \tname{report.md}: Human-readable Markdown summary documenting the findings.
+\end{itemize}
+These files are automatically generated and contain no raw, internal jargon.

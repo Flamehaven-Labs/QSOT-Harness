@@ -1,0 +1,23 @@
+% Section 1: Background and scope
+
+\subsection{Physical context and controlled phenomenological model scope}
+The study of quantum fields propagating on curved spacetimes lies at the boundary of general relativity and quantum mechanics. A central challenge in this domain is understanding how classical gravitational fields induce decoherence in localized quantum systems. 
+
+To explore this, \texttt{QSOT-Harness} implements a controlled phenomenological model that maps the geometry of a classical spacetime background (using the Riemann tensor's Frobenius norm for decoherence modeling, and the Ricci tensor for the admissibility gate checks) to a single-qubit quantum channel. We emphasize that this model is a phenomenological ansatz and does not represent a first-principles physical derivation. The model is conceptually inspired by the established idea that gravitational time dilation and spacetime curvature induce decoherence in localized quantum probes (see for instance~\cite{Pikovski2015}), but the specific mathematical mapping is a software construct designed for demonstration.
+
+\subsection{The transition to V2: software verification}
+The previous iteration of this software (V1) combined these physics models with a Streamlit web dashboard and a FastAPI REST server. 
+
+The current release, \texttt{QSOT-Harness}, shifts to a print-and-exit command-line interface (CLI). Rather than acting as an external physical discovery tool, it is designed as a mathematical and software verification harness. The core execution engine is organized into a sequential 8-phase pipeline containing 50 distinct checks. These checks do not validate a law of nature; instead, they verify that the encoded backgrounds, curvature residuals, temporal-state channel maps, and audit gates remain mathematically consistent under the stated QSOT assumptions.
+
+\subsection{Scope and explicit boundaries}
+This replication package accompanying \texttt{QSOT-Harness} has a narrow, software-focused scope:
+\begin{itemize}[leftmargin=*]
+  \item we \emph{do not} validate a new physical law or propose a verified model of quantum gravity;
+  \item we \emph{do not} claim that the mapping has a physical derivation from path integrals or field theory;
+  \item we \emph{do} implement, in pure NumPy, a mathematical transformation mapping a spacetime background field and its Riemann and Ricci curvatures to Kraus CPTP channels;
+  \item we \emph{do} write regression tests verifying that the code consistently computes purity decay under curved metrics and zero decay under flat metrics;
+  \item we \emph{do} demonstrate a hybrid Python-Rust software architecture using a vector-search sidecar subprocess as an integration check.
+\end{itemize}
+
+The remainder of the paper describes the temporal-state axioms and phenomenological calculations (Phases 0--3) (\S\ref{sec:phases_1_3}), non-classicality checks (\S\ref{sec:phases_4_5}), the Rust turbovec integration (\S\ref{sec:phase_6}), the compliance audit framework (\S\ref{sec:scientific_audit}), explicit limitations (\S\ref{sec:limits}), and reproducibility guidelines (\S\ref{sec:repro}).

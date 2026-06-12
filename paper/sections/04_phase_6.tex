@@ -1,0 +1,21 @@
+% Section 4: Phase 6: Rust turbovec Sidecar Vector Search Verification
+
+This section describes the integration and verification of the Rust sidecar.
+
+\subsection{Engineering purpose of the Rust sidecar}
+Phase 6 executes a compiled Rust binary named \tname{rust_verify} (built from the sources in \tname{src/qsot_v2/rust_sidecar}) as a subprocess. The data exchange uses temporary JSON files (\tname{test_vectors.json} and \tname{rust_verify_result.json}).
+
+We clarify that this phase is purely a hybrid software architecture test. It verifies that the Python runner can spawn the Rust executable, exchange JSON data, and that the Rust vector index (using the \tname{turbovec} library) functions within its own quantization error limits. This phase does not contribute to the physical validity of the spacetime curvature-to-channel mapping; it is an integration and performance sanity check for the package's software stack.
+
+\subsection{Automated checks}
+The phase executes four regression tests:
+\begin{enumerate}
+  \item \tname{rust_verify_binary_runs}: Confirms that the subprocess executes successfully and exits with code $0$.
+  \item \tname{rust_turbovec_verdict_is_pass}: Verifies that the overall verdict returned by the Rust binary is \texttt{PASS}.
+  \item \tname{rust_turbovec_ingested_correct_count}: Confirms that the sidecar ingested the expected number of vectors.
+  \item \tname{rust_turbovec_quantization_error_within_bounds}: Verifies that the difference between the exact dot products and the quantized index query results remains within the index limits:
+        \begin{equation}
+          \max |S_{\text{exact}} - S_{\text{quantized}}| \le 0.15.
+          \label{eq:quantization_error}
+        \end{equation}
+\end{enumerate}

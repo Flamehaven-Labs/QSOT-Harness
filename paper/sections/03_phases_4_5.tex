@@ -1,0 +1,55 @@
+% Section 3: Phases 4-5: Kirkwood-Dirac Optimization and Non-Markovianity
+
+This section describes the non-classicality checks and memory-effect measurements.
+
+\subsection{Phase 4: Kirkwood-Dirac basis optimization}
+The Kirkwood-Dirac (KD) quasiprobability distribution provides a representation of quantum states in terms of two non-orthogonal measurement bases. For a density matrix $\rho$ and two projectors $P_a = |a\rangle\langle a|$ and $P_b = |b\rangle\langle b|$, the KD quasiprobability is:
+\begin{equation}
+  Q_{\text{KD}}(a, b) = \text{Tr}(P_b P_a \rho).
+  \label{eq:kd_formula}
+\end{equation}
+
+When the two bases do not commute, $Q_{\text{KD}}(a, b)$ can take complex values whose real part may be negative. We stress that such negativity is a generic property of single-qubit states and is present even in the flat-spacetime baseline; the harness therefore does \emph{not} treat raw KD negativity as a curvature-specific signal or as a contextuality proof.
+
+For each state $\rho$, the framework parameterizes $|a\rangle$ and $|b\rangle$ by Bloch-sphere angles $(\theta_a, \phi_a)$ and $(\theta_b, \phi_b)$ and runs a bounded basis search:
+\begin{equation}
+  \min_{\theta_a, \phi_a, \theta_b, \phi_b} \text{Re}\left(\text{Tr}[P_b P_a \rho]\right)
+  \label{eq:kd_opt}
+\end{equation}
+with PyTorch's Adam optimizer for a fixed, hand-set budget of 50 steps. In the reference run this search does \emph{not} converge within the budget, so the corresponding check \tname{kd_optimization_converged} is reported as \texttt{DEGRADED\_PASS} rather than \texttt{PASS}.
+
+Rather than reporting raw negativity, the harness records the \emph{flat-relative} quantity
+\begin{equation}
+  \Delta_{\text{KD}} = Q^{\text{de Sitter}}_{\text{KD}} - Q^{\text{flat}}_{\text{KD}}
+  \label{eq:kd_delta}
+\end{equation}
+(observation \tname{kd_delta}) as a comparative signal under the implemented model. In the reference run $Q^{\text{flat}}_{\text{KD}} \approx -0.123$ and $Q^{\text{de Sitter}}_{\text{KD}} \approx -0.012$, giving $\Delta_{\text{KD}} \approx +0.11$. This is interpreted only as a relative, non-converged proxy within the model.
+
+Finding negative KD values for a single-qubit state is a standard property of quantum mechanics, not evidence about spacetime. Phase~4 therefore demonstrates only that the optimizer runs over Bloch-sphere variables and that the comparative signal is recorded together with its convergence status; it does \emph{not} validate the spacetime mapping's physical reality, prove that gravity is quantized, or constitute a contextuality witness for any external system.
+
+\subsection{Phase 5: Transfer Tensor Method and accessibility score}
+Phase 5 exercises a non-Markovianity detector and computes a unified compliance score. The detector is run in two clearly separated modes, which earlier versions conflated.
+
+\subsubsection{Transfer Tensor Method memory-kernel proxy}
+While the true Transfer Tensor Method (TTM)~\cite{CerrilloCao2014} reconstructs the non-Markovian memory kernel $\mathcal{K}(t_n, t_k)$ via full process tomography, our framework implements a simple trace-distance proxy:
+\begin{equation}
+  \text{nm\_measure} = \sum_{n=1}^N \|\rho_{\text{actual}}(t_n) - \mathcal{E}_n(\rho(t_{n-1}))\|_{\text{tr}},
+  \label{eq:ttm_proxy}
+\end{equation}
+where $\|A\|_{\text{tr}} = \frac{1}{2}\text{Tr}\sqrt{A^\dagger A}$ is the trace distance and $\mathcal{E}_n$ is the configured CPTP channel applied at step $n$ --- i.e.\ the Markovian one-step prediction, not a fitted generator. The proxy measures the accumulated drift of the actual trajectory from the channel-predicted Markovian path.
+
+\subsubsection{Detector self-test versus model trajectory}
+We separate two categories explicitly:
+\begin{itemize}[leftmargin=*]
+  \item \emph{Synthetic self-test} (\tname{memory_kernel}, evidence class \texttt{synthetic\_harness\_output}): an artificial coherence backflow is injected into the trajectory so that $\text{nm\_measure} > 0$ (reference value $\approx 1.4\times10^{-3}$). A pass here validates only that the detector registers backflow; it is \emph{not} evidence that the model exhibits non-Markovian physics.
+  \item \emph{Model trajectory} (\tname{memory_kernel_model_trajectory}, evidence class \texttt{phenomenological\_model\_output}): when the configured channel is applied consistently with no injected revival, the phenomenological map is Markovian by construction and the model's own trajectory yields $\text{nm\_measure} = 0$.
+\end{itemize}
+The headline non-Markovianity ``pass'' therefore refers to the detector self-test on synthetic input; the model itself produces no non-Markovian backflow.
+
+\subsubsection{Accessibility score}
+The unified accessibility score integrates the check statuses and penalties into a single metric $A \in [0, 1]$:
+\begin{equation}
+  A = A_{\text{base}} - \text{Penalty}_{\text{Markov}} - \text{Penalty}_{\text{KD}} - \text{Penalty}_{\text{Risk}},
+  \label{eq:accessibility}
+\end{equation}
+This is a heuristic compliance metric designed to demonstrate automated software scoring, not a fundamental physical parameter.
