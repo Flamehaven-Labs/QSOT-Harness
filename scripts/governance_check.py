@@ -14,6 +14,7 @@ never inspected or published).
 
 Run:  python scripts/governance_check.py
 """
+
 from __future__ import annotations
 
 import re

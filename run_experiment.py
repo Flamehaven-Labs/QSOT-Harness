@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 """Wrapper entrypoint script to execute the QSOT v2 experiment runner."""
+
 from __future__ import annotations
 
 import sys
