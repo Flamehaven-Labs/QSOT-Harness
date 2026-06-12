@@ -92,7 +92,7 @@ The outputs will be generated inside the `reports/` folder:
 1. **Phase 1: Flat Baselines**: Establishes rest and boosted flat spacetime limits ($P=1.0, S=0$).
 2. **Phase 2: Curvature Noise**: Drives state purity decay and entropy growth across de Sitter, Schwarzschild, AdS5, and Eguchi-Hanson metrics.
 3. **Phase 3: Relativistic Boosts**: Checks that, within the implemented model, high-velocity observers experience increased effective noise.
-4. **Phase 4: Kirkwood-Dirac Governance**: Runs basis optimization to detect negative quasiprobability and contextuality-proxy signals within the implemented KD formulation.
+4. **Phase 4: Kirkwood-Dirac (flat-relative)**: Runs a bounded basis-search optimization and reports the de-Sitter-minus-flat KD delta as a relative signal under the implemented model — not a contextuality proof. Optimizer convergence is labeled explicitly (a non-converged run is surfaced as `DEGRADED_PASS`).
 5. **Phase 5: TTM & Accessibility**: Uses Transfer Tensors to measure memory depth and determines accessibility.
 6. **Phase 6: Rust turbovec**: Tests vector search quantization limits under the `turbovec` sidecar.
 7. **Phase 7: Scientific Audit**: Compares each background's gate outputs and residuals against the project's own predefined expected-behavior table, producing a bounded, environment-dependent review signal — not external ground truth.
