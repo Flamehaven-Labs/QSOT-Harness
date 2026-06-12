@@ -12,7 +12,7 @@ authors:
     affiliation: Independent
 repository-code: "https://github.com/Flamehaven-Labs/QSOT-Harness"
 license: MIT
-version: 2.0.0
+version: 2.1.0
 date-released: "2026-06-12"
 keywords:
   - open quantum systems

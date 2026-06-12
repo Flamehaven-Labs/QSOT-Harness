@@ -4,6 +4,21 @@ All notable changes to the **QSOT Harness** package will be documented in this f
 
 ---
 
+## [2.1.0] - 2026-06-12
+
+### Added
+- **Accompanying manuscript** (`paper/`) with a LaTeX -> PDF CI build (`paper.yml`) and SHA-256-anchored frozen experiment evidence (`paper/evidence/`).
+- **Claim-integrity governance gate** (`scripts/governance_check.py` + `governance.yml`): fails CI on local-workspace path leaks or forbidden overclaim phrases; covers code, docs, and the manuscript.
+- **Archival/citation metadata**: `.zenodo.json` and `CITATION.cff`.
+
+### Changed
+- Manuscript repositioned as a bounded verification-architecture paper (claim boundary, evidence classes, calibration manifest, synthetic-vs-model separation) rather than a physics-result paper; numbers and identity synchronized to the current code (64 tests, ~94% coverage, `QSOT-Harness`).
+- README Phase 4 aligned to flat-relative Kirkwood-Dirac semantics.
+
+### Fixed
+- Rust sidecar CI build: install `libopenblas-dev` for the `turbovec` BLAS backend.
+- Deterministic formatting via pinned Black (`26.5.1`); Node 24-compatible GitHub Actions.
+
 ## [2.0.1] - 2026-06-09
 
 ### Added
