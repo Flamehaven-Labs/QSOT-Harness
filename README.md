@@ -1,14 +1,15 @@
-# QSOT Harness
+# QSOT-Harness
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20656476.svg)](https://doi.org/10.5281/zenodo.20656476)
 [![CI](https://github.com/Flamehaven-Labs/QSOT-Harness/actions/workflows/ci.yml/badge.svg)](https://github.com/Flamehaven-Labs/QSOT-Harness/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
 [![Coverage ~94%](https://img.shields.io/badge/coverage-~94%25-brightgreen.svg)](#running-tests)
 [![Claim scope: model-consistency only](https://img.shields.io/badge/claim%20scope-model--consistency%20only-orange.svg)](#what-this-is-and-is-not)
 
-A bounded, **epistemically-labeled** CLI harness that runs quantum-channel models of curved-spacetime backgrounds and emits machine-readable verification artifacts (`result.json`, `report.md`). It verifies **model-output consistency under explicitly stated assumptions** — not external physical validity. The pipeline is a strict, reproducible **"Print-and-Exit"** CLI runner.
+**QSOT** stands for **Quantum State Over Time**. QSOT-Harness is a bounded, **epistemically-labeled** CLI harness that runs quantum-channel models of curved-spacetime backgrounds and emits machine-readable verification artifacts (`result.json`, `report.md`). It verifies **model-output consistency under explicitly stated assumptions** — not external physical validity. The pipeline is a strict, reproducible **"Print-and-Exit"** CLI runner.
 
-> **Honest reconstruction.** This is the genuine rebuild of QSOT. Its predecessor (*"QSOT Compiler V1"*) was published as an **intentional** high-formality slop artifact — executable and formal-looking, but scientifically hollow. QSOT Harness removes that slop: every reported signal declares its evidence class, every external/optional backend is surfaced in `audit_context`, the KD signal is reported flat-relative (not as a contextuality proof), non-Markovianity self-tests are kept distinct from model trajectories, and free calibration parameters are listed with what they govern. The claim boundary is machine-readable — see [`docs/theory/claim_boundary.md`](docs/theory/claim_boundary.md).
+> **Honest reconstruction.** This is the genuine rebuild of QSOT. Its predecessor (*"QSOT Compiler V1"*) was published as an **intentional** high-formality slop artifact — executable and formal-looking, but scientifically hollow. QSOT-Harness removes that slop: every reported signal declares its evidence class, every external/optional backend is surfaced in `audit_context`, the KD signal is reported flat-relative (not as a contextuality proof), non-Markovianity self-tests are kept distinct from model trajectories, and free calibration parameters are listed with what they govern. The claim boundary is machine-readable — see [`docs/theory/claim_boundary.md`](docs/theory/claim_boundary.md).
 
 ## What this is and is not
 

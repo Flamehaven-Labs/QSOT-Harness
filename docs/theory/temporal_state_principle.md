@@ -1,8 +1,8 @@
 # Temporal-State Axiom Contract
 
-The **Temporal-State candidate principle** (QSOT) represents quantum evolution not simply as a parameterized transition over an external time parameter, but as a representation possibility within a constrained multipartite temporal-state structure.
+The **Temporal-State candidate principle** (QSOT, *Quantum State Over Time*) represents quantum evolution not simply as a parameterized transition over an external time parameter, but as a representation possibility within a constrained multipartite temporal-state structure.
 
-QSOT 2.1 introduces a **Temporal-State Axiom Contract Layer** (Phase 0) to evaluate whether such representation is contract-preserving under explicitly bounded model assumptions. It serves as a falsification harness rather than a physical proof.
+QSOT-Harness introduces a **Temporal-State Axiom Contract Layer** (Phase 0) to evaluate whether such representation is contract-preserving under explicitly bounded model assumptions. It serves as a falsification harness rather than a physical proof.
 
 ## Core Axioms
 

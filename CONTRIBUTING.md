@@ -1,6 +1,6 @@
-# Contributing to QSOT Compiler V2
+# Contributing to QSOT-Harness
 
-Thank you for contributing to QSOT Compiler V2! Below are the guidelines for developing, testing, and verifying changes.
+Thank you for contributing to QSOT-Harness (QSOT: *Quantum State Over Time*)! Below are the guidelines for developing, testing, and verifying changes.
 
 ---
 

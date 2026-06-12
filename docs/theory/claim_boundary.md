@@ -1,6 +1,6 @@
 # Bounded Model Assumptions and Claim Control
 
-QSOT 2.1 implements a strict claim control boundary to prevent over-claiming and name-based physics validation anomalies.
+QSOT-Harness (QSOT: *Quantum State Over Time*) implements a strict claim control boundary to prevent over-claiming and name-based physics validation anomalies.
 
 ## Claim Boundaries (`claim_boundary.py`)
 

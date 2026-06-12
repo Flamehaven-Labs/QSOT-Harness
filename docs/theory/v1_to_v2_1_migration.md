@@ -1,6 +1,6 @@
 # Migration Guide: V1 to V2.1
 
-This guide documents the transition from the prototype-focused V1 architecture to the audit-first V2.1 executable contract runner.
+QSOT (*Quantum State Over Time*) is the project's framing of temporal quantum evolution. This guide documents the transition from the prototype-focused V1 architecture to the audit-first V2.1 executable contract runner.
 
 ## Summary of Changes
 

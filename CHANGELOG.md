@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to the **QSOT Harness** package will be documented in this file.
+All notable changes to **QSOT-Harness** (QSOT: *Quantum State Over Time*) will be documented in this file.
 
 ---
 
