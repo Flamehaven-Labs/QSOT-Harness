@@ -4,6 +4,15 @@ All notable changes to **QSOT-Harness** (QSOT: *Quantum State Over Time*) will b
 
 ---
 
+## [2.1.1] - 2026-06-12
+
+### Fixed
+- **Frozen-evidence provenance repair**: `paper/evidence/PROVENANCE.md` recorded the Windows CRLF working-tree SHA-256 of `result.json` / `report.md` (`0d2461a9...` / `023c8a4c...`), but the repository normalizes text to LF (`.gitattributes`), so the committed, archived (Zenodo), and freshly-cloned bytes hash to `b1a83df5...` / `18c6a2fa...`. A third party verifying the published files against the recorded hashes would have mismatched. Corrected the recorded hashes to the canonical LF values and normalized the working-tree copies.
+
+### Changed
+- Citation / archive title now spells out the acronym: **QSOT (Quantum State Over Time)-Harness**.
+- **No** physics, model, report, or experiment-result semantics changed; this is a provenance/metadata repair only.
+
 ## [2.1.0] - 2026-06-12
 
 ### Added

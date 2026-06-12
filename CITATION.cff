@@ -1,6 +1,6 @@
 cff-version: 1.2.0
 message: "If you use this software, please cite it using these metadata."
-title: "QSOT-Harness: A Bounded, Epistemically Labeled Verification Harness for Phenomenological Quantum-Channel Models of Curved Spacetime"
+title: "QSOT (Quantum State Over Time)-Harness: A Bounded, Epistemically Labeled Verification Harness for Phenomenological Quantum-Channel Models of Curved Spacetime"
 abstract: >-
   QSOT stands for Quantum State Over Time. QSOT-Harness is a bounded,
   epistemically-labeled CLI harness that runs quantum-channel models of
@@ -14,7 +14,7 @@ authors:
 repository-code: "https://github.com/Flamehaven-Labs/QSOT-Harness"
 doi: 10.5281/zenodo.20656476
 license: MIT
-version: 2.1.0
+version: 2.1.1
 date-released: "2026-06-12"
 keywords:
   - open quantum systems

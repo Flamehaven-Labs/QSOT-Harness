@@ -1,6 +1,6 @@
 {
   "upload_type": "software",
-  "title": "QSOT-Harness: A Bounded, Epistemically Labeled Verification Harness for Phenomenological Quantum-Channel Models of Curved Spacetime",
+  "title": "QSOT (Quantum State Over Time)-Harness: A Bounded, Epistemically Labeled Verification Harness for Phenomenological Quantum-Channel Models of Curved Spacetime",
   "description": "QSOT stands for Quantum State Over Time. QSOT-Harness is a bounded, epistemically-labeled CLI harness that runs quantum-channel models of curved-spacetime backgrounds and emits machine-readable verification artifacts (result.json, report.md). It verifies model-output consistency under explicitly stated assumptions -- not external physical validity. Includes the accompanying manuscript under paper/.",
   "creators": [
     { "name": "Yun, Kwansub", "affiliation": "Independent" }
