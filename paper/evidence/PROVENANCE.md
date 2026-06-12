@@ -6,15 +6,20 @@ transparency and for registration in the audit ledger.
 
 ## Frozen files (SHA-256)
 
-| File | SHA-256 |
+SHA-256 over the **canonical LF bytes** as committed/archived in this repository
+(the repo normalizes text to LF via `.gitattributes`, so these match a fresh
+clone and the Zenodo archive on any platform):
+
+| File | SHA-256 (LF) |
 |---|---|
-| `result.json` | `0d2461a96cc287fe0f76b22c1b3cd308a3d86201ce90c9f0ad8f14bf5b8db8ca` |
-| `report.md`   | `023c8a4cd407680968c5eac5adf9dbf1a7f0677bbf6c0d612cbee7dc3edaaa11` |
+| `result.json` | `b1a83df5caf8d1f222b6d15254c7de0d87ebfece574d7605d30f7ef9951dac6b` |
+| `report.md`   | `18c6a2facecb2cd107f1b45b117997d1aca2a36346e671f1e546cb60a4d51976` |
 
 ## Provenance
 
 - **generated_at**: `2026-06-12T04:50:29.334295+00:00` (from `result.json`)
-- **code commit (QSOT-Harness)**: `26c06800e6e38fb53dc69b915d8cf509715f9ca7`
+- **run engine commit**: `26c06800e6e38fb53dc69b915d8cf509715f9ca7`
+- **archived in release**: v2.1.0 (`4f19078`). The run engine (`src/`, `configs/`, `run_experiment.py`) is byte-identical between `26c0680` and `4f19078` (empty diff), so this frozen artifact is canonical for the v2.1.0 record.
 - **schema**: `compliance.qsot_v2.experiment_result.v2`
 
 ## Environment dependence (read before reproducing)
